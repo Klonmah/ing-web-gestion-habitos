@@ -1,24 +1,20 @@
 import { IonPage, IonContent, IonButton } from '@ionic/react';
 import { useNavigate } from 'react-router-dom';
 
-const Home: React.FC = () => {
+const Admin: React.FC = () => {
   const navigate = useNavigate();
 
   return (
     <IonPage>
       <IonContent className="ion-padding">
-        <h1>Inicio</h1>
+        <h1>Administración</h1>
 
-        <IonButton onClick={() => navigate('/tareas')}>
-          Ir a mis tareas
-        </IonButton>
-
-        <IonButton onClick={() => navigate('/admin')}>
-          Ir a administración
+        <IonButton onClick={() => navigate('/home')}>
+          Volver a inicio
         </IonButton>
       </IonContent>
     </IonPage>
   );
 };
 
-export default Home;
+export default Admin;
