@@ -139,6 +139,7 @@ Si no hay sesión, todas redirigen a `/login`.
 | `/habitos/:id/editar` | Editar hábito       | `/habitos/:id`          | RF-02        | Página que permite al usuario editar los datos del hábito y eliminarlo.                                                                       |
 | `/recordatorios`      | Recordatorios       | `/perfil`               | RF-05        | Permite al Usuario gestionar sus notificaciones, para ver qué hábito necesita recordatorio, cuál no y a qué hora debe llegar el recordatorio. |
 | `/configuraciones`    | Configuraciones     | `/perfil`               |              | Permite cambiar entre el modo oscuro y el claro"y cerrar sesión.                                                                              |
+
 Si no hay sesión, todas redirigen a `/login`.
 
 **Rutas Protegidas del Administrador:**
@@ -149,6 +150,7 @@ Si no hay sesión, todas redirigen a `/login`.
 | `/admin/plantillas/nueva`      | Nueva plantilla       | RF-07 | Página en la cual el Administrador creará una nueva plantilla.                                                                          |
 | `/admin/plantillas/:id/editar` | Editar plantilla      | RF-07 | Página en la cual el Administrador podrá editar una plantilla por su ID.                                                                |
 | `/admin/categorias-metricas`   | Categorías y métricas | RF-08 | Permite gestionar categorías y consultar métricas agregadas y anonimizadas del uso de la app                                            |
+
 Todas las rutas de administrador requieren sesión activa y rol de administrador. Sin sesión → `/login`. Usuario normal → `/acceso-denegado`.
 
 **Rutas especiales:**
@@ -275,6 +277,142 @@ Podrá:
 
 ## Flujos de Tareas
 
+Los flujos de tareas (*task flows*) representan la secuencia de acciones que realiza un usuario para completar una actividad específica dentro de la aplicación.
+
+Se consideran tres flujos principales, todos asociados al rol **Usuario**.
+
+---
+
+### Task Flow 1: Registrar el cumplimiento de un hábito
+
+**Rol:** Usuario
+
+**Objetivo:** marcar un hábito del día como cumplido y actualizar su racha, en un solo toque desde la pantalla de inicio (RF-03, RNF-03).
+
+```text
+Inicio de sesión (si no hay sesión activa)
+      ↓
+Inicio (/inicio)
+      ↓
+Visualizar hábitos del día
+      ↓
+Marcar el hábito como cumplido (1 toque)
+      ↓
+¿Registro exitoso?
+   ↓          ↓
+  No          Sí
+   ↓           ↓
+Mostrar      Guardar fecha y hora
+error y      del cumplimiento
+permitir        ↓
+reintentar   Actualizar racha
+                ↓
+             Mostrar confirmación visual
+```
+---
+
+### Task Flow 2: Crear una tarea
+
+**Rol:** Usuario
+
+**Objetivo:** registrar una nueva tarea con su fecha límite y prioridad (RF-01).
+
+```text
+Inicio (/inicio)
+      ↓
+Mis tareas (/tareas)
+      ↓
+Seleccionar "Nueva tarea"
+      ↓
+Nueva tarea (/tareas/nueva)
+      ↓
+Ingresar título, descripción, fecha límite y prioridad
+      ↓
+Guardar tarea
+      ↓
+¿Datos válidos?
+   ↓          ↓
+  No          Sí
+   ↓           ↓
+Mostrar      Registrar tarea
+errores         ↓
+   ↓         Mostrar confirmación
+Corregir        ↓
+datos        Volver a "Mis tareas"
+```
+---
+
+### Task Flow 3: Adoptar un hábito del catálogo
+---
+
+**Rol:** Usuario
+
+**Objetivo:** incorporar una plantilla del catálogo como hábito propio, ajustando su frecuencia, meta y horario (RF-02, RF-06).
+
+```text
+Inicio (/inicio)
+      ↓
+Catálogo (/catalogo)
+      ↓
+Filtrar por categoría y dificultad
+      ↓
+Seleccionar una plantilla
+      ↓
+Seleccionar "Adoptar"
+      ↓
+Nuevo hábito (/habitos/nuevo) con datos precargados
+      ↓
+Ajustar frecuencia, meta y horario
+      ↓
+Guardar hábito
+      ↓
+¿Datos válidos?
+   ↓          ↓
+  No          Sí
+   ↓           ↓
+Mostrar      Registrar hábito
+errores         ↓
+   ↓         Mostrar confirmación
+Corregir        ↓
+datos        Volver a "Inicio" con el hábito en la lista del día
+```
+
+### Puntos críticos de interacción
+
+Los puntos críticos de interacción corresponden a aquellas acciones o momentos del sistema en los que una interfaz poco clara, una validación insuficiente o una navegación compleja puede afectar significativamente la experiencia del usuario.
+
+Para esta aplicación se identifican los siguientes puntos críticos:
+
+1. **Inicio de sesión, registro y acceso según rol:** El sistema deberá informar con mensajes claros cuando las credenciales sean incorrectas, y en el registro deberá mostrar las reglas de la contraseña (mínimo 8 caracteres alfanuméricos, RNF-02) indicando cuáles se cumplen mientras el usuario escribe. Una vez autenticado, deberá redirigir a la vista correspondiente al rol (`/inicio` o `/admin/plantillas`) e impedir el acceso a rutas no autorizadas. Cuando la sesión expire , deberá enviar al usuario a `/login` con un aviso, sin mostrar pantallas rotas.
+
+2. **Registro del cumplimiento de un hábito:** Es la acción más frecuente de la app, por lo que debe requerir máximo 2 interacciones desde el inicio (RNF-03). El check debe ser lo bastante grande para tocarse fácilmente en móvil, dar retroalimentación inmediata (cambio de estado y actualización visible de la racha) y permitir reintentar si el registro falla.
+
+3. **Formularios de tareas y hábitos:** El sistema deberá indicar qué campos son obligatorios, mostrar los errores junto al campo correspondiente y conservar lo ya escrito cuando haya un error, para que el usuario no tenga que ingresarlo de nuevo. Al guardar, deberá confirmar que la operación se realizó.
+
+4. **Adopción de un hábito desde el catálogo:** Los filtros por categoría y dificultad (RF-06) deben ser visibles y fáciles de limpiar. Al adoptar una plantilla, el formulario debe abrirse con los datos precargados y editables, dejando claro que se está creando un hábito propio a partir de ella.
+
+5. **Acciones irreversibles:** Eliminar una tarea o un hábito, o desactivar una plantilla, deberá pedir confirmación explícita y describir la consecuencia. En el caso de las plantillas en uso (RF-07), la interfaz deberá explicar por qué no se pueden eliminar y ofrecer desactivarlas.
+
+6. **Visualización de progreso y datos:** El porcentaje de cumplimiento semanal y mensual (RF-04) y la racha deben presentarse con un número claro además del gráfico, y sin depender solo del color para transmitir el estado (contraste mínimo 4.5:1 y texto escalable hasta 200%, RNF-04). Cuando aún no hay datos, la vista deberá mostrar un estado vacío que guíe al usuario a su primer hábito. En las métricas del administrador (RF-08), los datos se mostrarán agregados y anonimizados.
+
+7. **Cambio entre versión web y móvil:** La ubicación de los componentes cambia según el dispositivo (barra inferior en móvil, menú lateral en web), pero las funcionalidades, etiquetas, orden de las secciones y patrones de interacción se mantienen iguales. La interfaz debe renderizar sin scroll horizontal entre 360 y 1280 píxeles (RNF-05), de modo que el usuario no necesite aprender la app de nuevo al cambiar de dispositivo.{
+
+
+### ### Justificación Técnica
+
+La arquitectura de navegación se diseñó considerando **usabilidad, eficiencia de interacción, claridad estructural y escalabilidad**, para facilitar el acceso a las funcionalidades según el rol de cada usuario.
+
+#### Usabilidad
+La navegación es simple y predecible: las cinco secciones principales (Inicio, Mis tareas, Catálogo, Progreso y Perfil) son las mismas en móvil y en web, y solo cambia su contenedor (barra inferior o menú lateral). Las tareas y los hábitos se tratan como elementos distintos para que no se mezclen en una misma lista.
+
+#### Eficiencia de interacción
+Las acciones frecuentes requieren pocos pasos. Registrar el cumplimiento de un hábito se hace con un toque desde Inicio (RNF-03), y adoptar un hábito del catálogo abre el formulario con los datos precargados, de modo que el usuario solo los ajusta.
+
+#### Claridad estructural
+Las rutas se dividen en públicas y protegidas, y las de administrador cuelgan del prefijo `/admin`. Así se aplica un criterio de acceso por grupo y cada vista tiene una única responsabilidad: Inicio registra el cumplimiento, y el Detalle del hábito muestra su racha e historial.
+
+#### Escalabilidad
+Un nuevo rol se incorpora como un grupo de rutas con su propio criterio de acceso, sin modificar las existentes, y las nuevas secciones se agregan como rutas hijas de una vista actual. Además, el servidor valida el rol en cada solicitud (RF-08), por lo que la estructura puede crecer sin comprometer la seguridad.
 
 ## Bocetos UI/UX
 [Enlace a nuestro Figma] .....
