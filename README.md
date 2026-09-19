@@ -271,6 +271,7 @@ Podrá:
 /admin/plantillas/nueva
 /admin/plantillas/:id/editar
 /admin/categorias-metricas
+```
 
 ## Flujos de Tareas
 
