@@ -6,6 +6,7 @@ import Admin from '../pages/Admin';
 import Login from '../pages/Login';
 import PaginaPlaceholder from '../pages/PaginaPlaceholder';
 import { IonRouterOutlet } from '@ionic/react';
+import ProtectedRoute from './ProtectedRoute';
 
 function AppRoutes() {
     return (
@@ -18,24 +19,24 @@ function AppRoutes() {
             <Route path="/acceso-denegado" element={<PaginaPlaceholder />} />
 
             {/* Rutas protegidas */}
-            <Route path="/tareas" element={<MisTareas />} />
+            <Route path="/tareas" element={<ProtectedRoute><MisTareas /></ProtectedRoute>} />
 
-            <Route path="/inicio" element={<Home />} />
-            <Route path="/catalogo" element={<PaginaPlaceholder />} />
+            <Route path="/inicio" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+            <Route path="/catalogo" element={<ProtectedRoute><PaginaPlaceholder /></ProtectedRoute>} />
 
-            <Route path="/habitos" element={<PaginaPlaceholder />} />
+            <Route path="/habitos/nuevo" element={<ProtectedRoute><PaginaPlaceholder /></ProtectedRoute>} />
 
-            <Route path="/progreso" element={<PaginaPlaceholder />} />
-            <Route path="/perfil" element={<PaginaPlaceholder />} />
-            <Route path="/recordatorios" element={<PaginaPlaceholder />} />
-            <Route path="/configuraciones" element={<PaginaPlaceholder />} />
+            <Route path="/progreso" element={<ProtectedRoute><PaginaPlaceholder /></ProtectedRoute>} />
+            <Route path="/perfil" element={<ProtectedRoute><PaginaPlaceholder /></ProtectedRoute>} />
+            <Route path="/recordatorios" element={<ProtectedRoute><PaginaPlaceholder /></ProtectedRoute>} />
+            <Route path="/configuraciones" element={<ProtectedRoute><PaginaPlaceholder /></ProtectedRoute>} />
 
 
             {/* Ruta de admin */}
-            <Route path="/admin" element={<Admin />} />
+            <Route path="/admin/plantillas" element={<ProtectedRoute requireAdmin={true}><Admin /></ProtectedRoute>} />
 
             {/* Ruta por defecto */}
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
 
         </IonRouterOutlet>
 
