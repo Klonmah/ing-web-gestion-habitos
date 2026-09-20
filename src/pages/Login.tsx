@@ -9,7 +9,7 @@ const Login: React.FC = () => {
       <IonContent className="ion-padding">
         <h1>Login</h1>
 
-        <IonButton onClick={() => navigate('/home')}>
+        <IonButton onClick={() => navigate('/inicio')}>
           Iniciar sesión
         </IonButton>
       </IonContent>

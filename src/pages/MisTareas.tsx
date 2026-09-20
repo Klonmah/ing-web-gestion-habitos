@@ -9,7 +9,7 @@ const MisTareas: React.FC = () => {
       <IonContent className="ion-padding">
         <h1>Mis tareas</h1>
 
-        <IonButton onClick={() => navigate('/home')}>
+        <IonButton onClick={() => navigate('/inicio')}>
           Volver a inicio
         </IonButton>
       </IonContent>

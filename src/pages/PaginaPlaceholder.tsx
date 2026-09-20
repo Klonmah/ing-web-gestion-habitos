@@ -1,20 +1,20 @@
 import { IonPage, IonContent, IonButton } from '@ionic/react';
 import { useNavigate } from 'react-router-dom';
 
-const Admin: React.FC = () => {
+const PaginaPlaceholder: React.FC = () => {
   const navigate = useNavigate();
 
   return (
     <IonPage>
       <IonContent className="ion-padding">
-        <h1>Administración</h1>
+        <h1>Esta es una página placeholder</h1>
 
         <IonButton onClick={() => navigate('/inicio')}>
-          Volver a inicio
+          Ir a Inicio
         </IonButton>
       </IonContent>
     </IonPage>
   );
 };
 
-export default Admin;
+export default PaginaPlaceholder;
