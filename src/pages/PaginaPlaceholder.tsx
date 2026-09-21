@@ -1,11 +1,19 @@
-import { IonPage, IonContent, IonButton } from '@ionic/react';
+import { IonPage, IonContent, IonButton, IonSplitPane } from '@ionic/react';
 import { useNavigate } from 'react-router-dom';
+import LeftSideMenu from '../components/LeftSideMenu';
 
 const PaginaPlaceholder: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <IonPage>
+    
+
+    <IonPage id="main-content">
+      <IonSplitPane contentId="main-content" when="md">
+
+      <LeftSideMenu />
+
+      <div id="main-content" className="ion-page">
       <IonContent className="ion-padding">
         <h1>Esta es una página placeholder</h1>
 
@@ -13,6 +21,9 @@ const PaginaPlaceholder: React.FC = () => {
           Ir a Inicio
         </IonButton>
       </IonContent>
+      </div>
+    
+    </IonSplitPane>
     </IonPage>
   );
 };

@@ -7,6 +7,7 @@ import Login from '../pages/Login';
 import PaginaPlaceholder from '../pages/PaginaPlaceholder';
 import { IonRouterOutlet } from '@ionic/react';
 import ProtectedRoute from './ProtectedRoute';
+import LeftSideMenu from '../components/LeftSideMenu';
 
 function AppRoutes() {
     return (
@@ -19,7 +20,7 @@ function AppRoutes() {
             <Route path="/acceso-denegado" element={<PaginaPlaceholder />} />
 
             {/* Rutas protegidas */}
-            <Route path="/tareas" element={<ProtectedRoute><MisTareas /></ProtectedRoute>} />
+            <Route path="/tareas" element={<ProtectedRoute><PaginaPlaceholder /></ProtectedRoute>} />
 
             <Route path="/inicio" element={<ProtectedRoute><Home /></ProtectedRoute>} />
             <Route path="/catalogo" element={<ProtectedRoute><PaginaPlaceholder /></ProtectedRoute>} />
