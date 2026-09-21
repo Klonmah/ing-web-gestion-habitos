@@ -1,4 +1,4 @@
-import {Routes, Route } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 
 import Home from '../pages/Home';
 import MisTareas from '../pages/MisTareas';
@@ -7,7 +7,6 @@ import Login from '../pages/Login';
 import PaginaPlaceholder from '../pages/PaginaPlaceholder';
 import { IonRouterOutlet } from '@ionic/react';
 import ProtectedRoute from './ProtectedRoute';
-import LeftSideMenu from '../components/LeftSideMenu';
 
 function AppRoutes() {
     return (
@@ -20,7 +19,7 @@ function AppRoutes() {
             <Route path="/acceso-denegado" element={<PaginaPlaceholder />} />
 
             {/* Rutas protegidas */}
-            <Route path="/tareas" element={<ProtectedRoute><PaginaPlaceholder /></ProtectedRoute>} />
+            <Route path="/tareas" element={<ProtectedRoute><MisTareas /></ProtectedRoute>} />
 
             <Route path="/inicio" element={<ProtectedRoute><Home /></ProtectedRoute>} />
             <Route path="/catalogo" element={<ProtectedRoute><PaginaPlaceholder /></ProtectedRoute>} />
@@ -33,8 +32,9 @@ function AppRoutes() {
             <Route path="/configuraciones" element={<ProtectedRoute><PaginaPlaceholder /></ProtectedRoute>} />
 
 
-            {/* Ruta de admin */}
+            {/* Rutas de admin */}
             <Route path="/admin/plantillas" element={<ProtectedRoute requireAdmin={true}><Admin /></ProtectedRoute>} />
+            <Route path="/admin/categorias-metricas" element={<ProtectedRoute requireAdmin={true}><PaginaPlaceholder /></ProtectedRoute>} />
 
             {/* Ruta por defecto */}
             <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
