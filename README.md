@@ -17,6 +17,19 @@
 El sistema es un gestor de hábitos hecho para ayudar a usuarios para que puedan construir, organizar y mantener rutinas diarias de manera eficiente. El objetivo principal de nuestra aplicación es fomentar tanto la constancia como la productividad personal a través de este sistema con un registro rápido y recordatorios.
 La aplicación será completamente gratuita en donde todos los usuarios registrados tienen acceso a todas las funciones de la aplicación sin restricciones de suscripción.
 
+## Objetivos del proyecto
+
+**Objetivo general:** desarrollar una aplicación web y móvil que permita a las personas organizar sus tareas y construir hábitos saludables de forma constante, con un registro diario rápido y un seguimiento claro de su progreso.
+
+**Objetivos específicos:**
+- Permitir registrar el cumplimiento diario de un hábito en un máximo de dos interacciones.
+- Centralizar en una sola aplicación la gestión de tareas con fecha límite y prioridad, separada de los hábitos recurrentes.
+- Mostrar el progreso semanal y mensual mediante porcentajes y rachas que motiven la constancia.
+- Ofrecer un catálogo de hábitos saludables mantenido por un administrador, sin que este acceda a los datos personales de los usuarios.
+- Mantener una experiencia coherente entre la versión móvil y la versión web.
+
+---
+
 ## Índice
 1. [Justificación del problema](#justificación-del-problema)
 2. [Usuarios objetivo](#usuarios-objetivo)
@@ -415,9 +428,42 @@ Las rutas se dividen en públicas y protegidas, y las de administrador cuelgan d
 Un nuevo rol se incorpora como un grupo de rutas con su propio criterio de acceso, sin modificar las existentes, y las nuevas secciones se agregan como rutas hijas de una vista actual. Además, el servidor valida el rol en cada solicitud (RF-08), por lo que la estructura puede crecer sin comprometer la seguridad.
 
 ## Bocetos UI/UX
-[Enlace a nuestro Figma] .....
+[Enlace a nuestro Figma](https://www.figma.com/design/XpXTuIRPz4Y28WcnSCFjFk/Ingenieria-Web)
 
 ## Tecnologías
 - **Frontend:** Ionic Framework con React, TypeScript.
 - **Estilos:** TailwindCSS / CSS.
 - **Librerías principales:** 
+
+## Instalación y ejecución
+
+**Requisitos previos:**
+- [Node.js](https://nodejs.org) versión LTS (incluye npm).
+- [Git](https://git-scm.com).
+
+**Instalación:**
+
+```bash
+git clone https://github.com/Klonmah/ing-web-gestion-habitos.git
+cd ing-web-gestion-habitos
+git checkout frontend
+npm install
+```
+
+> **Nota para Windows:** si PowerShell muestra un error de *ejecución de scripts deshabilitada* al usar npm, ejecutar una vez:
+> `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`
+
+**Ejecución:**
+
+```bash
+npm run dev
+```
+
+Luego abrir en el navegador la dirección que muestra la terminal (por defecto `http://localhost:5173`).
+
+**Acceso de prueba:** en esta entrega la autenticación es simulada en el frontend, ya que el backend se implementa en la Entrega Parcial 2. La contraseña debe tener mínimo 8 caracteres, una mayúscula y un número.
+
+| Rol | Correo de ejemplo | Contraseña de ejemplo |
+|---|---|---|
+| Usuario | `usuario@correo.cl` | `Habitos2026` |
+| Administrador | `admin@admingeshab.cl` | `Habitos2026` |
