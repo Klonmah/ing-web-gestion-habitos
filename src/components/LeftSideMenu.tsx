@@ -4,7 +4,28 @@ import {
 } from '@ionic/react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-const LeftSideMenu: React.FC = () => {
+interface LeftSideMenuProps {
+    // Qué opciones mostrar. El administrador no accede a las secciones del
+    // usuario (ver matriz de acceso en el README).
+    rol?: 'usuario' | 'admin';
+    // Debe coincidir con el id del contenido principal de la página.
+    contentId?: string;
+}
+
+const paginasUsuario = [
+    { title: 'Inicio', url: '/inicio' },
+    { title: 'Mis tareas', url: '/tareas' },
+    { title: 'Catálogo', url: '/catalogo' },
+    { title: 'Progreso', url: '/progreso' },
+    { title: 'Perfil', url: '/perfil' }
+];
+
+const paginasAdmin = [
+    { title: 'Plantillas', url: '/admin/plantillas' },
+    { title: 'Categorías y métricas', url: '/admin/categorias-metricas' }
+];
+
+const LeftSideMenu: React.FC<LeftSideMenuProps> = ({ rol = 'usuario', contentId = 'main-content' }) => {
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -13,26 +34,20 @@ const LeftSideMenu: React.FC = () => {
         navigate('/login');
     };
 
-    const appPages = [
-        { title: 'Inicio', url: '/inicio' },
-        { title: 'Mis Tareas', url: '/tareas' },
-        { title: 'Catalogo', url: '/catalogo' },
-        { title: 'Progreso', url: '/progreso' },
-        { title: 'Perfil', url: '/perfil' }
-    ];
+    const appPages = rol === 'admin' ? paginasAdmin : paginasUsuario;
 
     return (
-        <IonMenu contentId="main-content" type="overlay">
+        <IonMenu contentId={contentId} type="overlay">
             <IonContent className="ion-padding-vertical" style={{ '--background': '#f8f9fa' } as React.CSSProperties}>
                 <div className="ion-padding" style={{ paddingBottom: '2rem' }}>
                     <h2 style={{ margin: 0, fontWeight: 'bold', color: '#333' }}>GesHab</h2>
                 </div>
 
                 <IonList style={{ background: 'transparent' }} lines="none">
-                    {appPages.map((appPage, index) => {
+                    {appPages.map((appPage) => {
                         const isSelected = location.pathname === appPage.url;
                         return (
-                            <IonMenuToggle key={index} autoHide={false}>
+                            <IonMenuToggle key={appPage.url} autoHide={false}>
                                 <IonItem
                                     routerLink={appPage.url}
                                     routerDirection="none"
@@ -57,8 +72,8 @@ const LeftSideMenu: React.FC = () => {
                             button
                             onClick={handleLogout}
                             lines="none"
-                            style={{ '--background': '#e2f0e9', '--color': '#333', textAlign: 'center' } as React.CSSProperties}>
-                            <IonLabel>Cerrar<br />sesion</IonLabel>
+                            style={{ '--background': 'transparent', '--color': '#C0392B', textAlign: 'center' } as React.CSSProperties}>
+                            <IonLabel>Cerrar sesión</IonLabel>
                         </IonItem>
                     </IonMenuToggle>
                 </div>
