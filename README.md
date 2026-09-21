@@ -47,9 +47,10 @@ La aplicación será completamente gratuita en donde todos los usuarios registra
 ---
 
 ## Justificación del problema
-El sedentarismo y la falta de organización personal afectan negativamente el bienestar general. Más de 1.400 millones de personas adultas suelen abandonar sus metas de actividad física o productividad. El desarrollo de esta plataforma permitirá centralizar la gestión de hábitos y tareas en una interfaz ágil, reduciendo el abandono y fomentando la constancia a través de rachas de cumplimiento.
+El sedentarismo y la falta de organización personal afectan negativamente el bienestar general. Más de 1.400 millones de personas adultas suelen abandonar sus metas de actividad física o productividad[1]. El desarrollo de esta plataforma permitirá centralizar la gestión de hábitos y tareas en una interfaz ágil, reduciendo el abandono y fomentando la constancia a través de rachas de cumplimiento.
 
 ---
+1. Zhu, Y., Long, Y., Wang, H., Lee, K. P., Zhang, L., & Wang, S. J. (2024). Digital Behavior Change Intervention Designs for Habit Formation: Systematic Review. Journal of Medical Internet Research, 26, e54375. https://doi.org/10.2196/54375
 
 ## Usuarios objetivo (quienes usarán la aplicación)
 Realmente un gestor de hábitos se puede hacer para una amplia variedad de usuarios que busquen mejorar su constancia, poder organizar sus rutinas o alcanzar metas específicas, como por ejemplo tenemos a estudiantes, profesionales, deportistas, diseñadores, etc.
@@ -87,7 +88,7 @@ Realmente un gestor de hábitos se puede hacer para una amplia variedad de usuar
 - Poder ver de forma clara su agenda de tareas para poder organizar sus mañanas de manera rápida.
 **Objetivos de uso:** Poder agendar sus rutinas diarias para poder ser eficiente, evitar la procrastinación en sus metas personales y tener un balance en el día a día
 **Dificultades/Frustraciones:** Aplicaciones que mezclan todas las tareas en una sola lista desorganizada o que no permite configurar hábitos para días específicos.
-**Funcionalidades que utilizaría:** Gestión de tareas (RF-01), Categorización/Filtros de hábitos (RF-02), Registro de cumplimiento (RF-03) y Recordatorios (RF-05).
+**Funcionalidades que utilizaría:** Gestión de tareas (RF-01), Categorización/Filtros de hábitos (RF-06), Registro de cumplimiento (RF-03) y Recordatorios (RF-05).
 **Dispositivo probable:** Teléfono móvil.
 
 ---
