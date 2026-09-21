@@ -44,13 +44,19 @@ const Login: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar>
-          <IonTitle>Iniciar Sesión</IonTitle>
-        </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
-        <h1>Login</h1>
-        <p>Ingresa tus datos para continuar.</p>
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          height: '100%', 
+          maxWidth: '400px', 
+          margin: '0 auto',
+          textAlign: 'center' 
+        }}>
+        <h1>Iniciar Sesión</h1>
 
         <form onSubmit={handleLogin}>
           <IonInput
@@ -81,16 +87,18 @@ const Login: React.FC = () => {
             </IonText>
           )}
 
-          <IonButton expand="block" type="submit" className="ion-margin-top">
+          <IonButton expand="block" type="submit" className="ion-margin-top" style={{'--ion-color-primary': '#2e6f5e'}}>
             <IonIcon slot="start" icon={logInOutline} />
             Ingresar
           </IonButton>
         </form>
 
-        <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+        <div style={{ textAlign: 'center', marginTop: '1rem', '--ion-color-primary': '#2e6f5e' }as React.CSSProperties}>
           <IonText color="medium">
             <p>¿No tienes cuenta? <a href="/registro">Regístrate aquí</a></p>
           </IonText>
+        </div>
+
         </div>
 
       </IonContent>
