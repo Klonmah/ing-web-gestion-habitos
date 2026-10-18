@@ -278,3 +278,18 @@ SELECT setval(pg_get_serial_sequence('habito', 'id_habito'),
               (SELECT MAX(id_habito) FROM habito));
 
 -- tarea, registroCumplimiento y recordatorio no usaron ids a mano.
+-- ---------------------------------------------------------------------
+-- 5. Pruebas de restricciones (comentadas; ejecutar a mano en psql)
+--    Las tres primeras DEBEN dar error.
+-- ---------------------------------------------------------------------
+-- 1) Cumplimiento duplicado -> error de UNIQUE
+-- INSERT INTO registro_cumplimiento (id_habito, fecha) VALUES (1, CURRENT_DATE);
+--
+-- 2) Borrar plantilla adoptada -> error de clave foranea (RF-07)
+-- DELETE FROM plantilla_habito WHERE id_plantilla = 1;
+--
+-- 3) Prioridad invalida -> error de CHECK
+-- INSERT INTO tarea (id_usuario, titulo, fecha_limite, prioridad) VALUES (2, 'Prueba', CURRENT_DATE, 'urgente');
+--
+-- 4) Borrar usuario -> se borran sus tareas, habitos, cumplimientos y recordatorios, el catalogo queda intacto
+-- DELETE FROM usuario WHERE id_usuario = 4;
