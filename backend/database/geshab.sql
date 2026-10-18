@@ -185,7 +185,7 @@ INSERT INTO categoria (id_categoria, nombre, descripcion) VALUES
     (4, 'Sueno',     'Descanso y rutina nocturna');
 
 
--- 3.3 Plantillas (la 6 esta inactiva para probar el filtro del catalogo)
+-- 3.3 Plantillas (la 6 esta inactiva para probar el filtro del catalogo de desactivar plantillas)
 INSERT INTO plantilla_habito
     (id_plantilla, id_categoria, nombre, descripcion, dificultad, frecuencia_sugerida, activa) VALUES
     (1, 1, 'Tomar 2 litros de agua',  'Mantenerse hidratado durante el dia',  'baja',  'diaria',  TRUE),
@@ -264,3 +264,17 @@ INSERT INTO recordatorio (id_habito, dia_semana, hora, activo) VALUES
     (5, 4, '19:00', FALSE),  -- jueves, desactivado
     (6, 6, '17:30', TRUE),   -- sabado
     (7, 1, '07:30', FALSE);  -- habito inactivo, recordatorio apagado
+
+-- ---------------------------------------------------------------------
+-- 4. Sincronizar secuencias (para que los ids automaticos no choquen con los ids de prueba en el backend)
+-- ---------------------------------------------------------------------
+SELECT setval(pg_get_serial_sequence('usuario', 'id_usuario'),
+              (SELECT MAX(id_usuario) FROM usuario));
+SELECT setval(pg_get_serial_sequence('categoria', 'id_categoria'),
+              (SELECT MAX(id_categoria) FROM categoria));
+SELECT setval(pg_get_serial_sequence('plantilla_habito', 'id_plantilla'),
+              (SELECT MAX(id_plantilla) FROM plantilla_habito));
+SELECT setval(pg_get_serial_sequence('habito', 'id_habito'),
+              (SELECT MAX(id_habito) FROM habito));
+
+-- tarea, registroCumplimiento y recordatorio no usaron ids a mano.
