@@ -1,0 +1,11 @@
+# Dependencias
+node_modules/
+
+# Compilado de TypeScript
+dist/
+
+# Variables de entorno con datos reales (no subir nunca al repositorio)
+.env
+
+# Logs
+*.log
