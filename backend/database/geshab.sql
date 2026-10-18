@@ -146,3 +146,14 @@ CREATE TABLE recordatorio (
     CONSTRAINT uq_recordatorio_habito_dia_hora
         UNIQUE (id_habito, dia_semana, hora)
 );
+
+-- ---------------------------------------------------------------------
+-- 2. Indices (RNF-01:) para que postgre busque las tablas mas rapido y cumplir con el rnf-01 de cargar el lista en menos de 2 segundos
+-- ---------------------------------------------------------------------
+CREATE INDEX idx_tarea_usuario          ON tarea (id_usuario);
+CREATE INDEX idx_habito_usuario         ON habito (id_usuario);
+CREATE INDEX idx_registro_habito_fecha  ON registro_cumplimiento (id_habito, fecha DESC);
+CREATE INDEX idx_plantilla_categoria    ON plantilla_habito (id_categoria);
+CREATE INDEX idx_recordatorio_activo    ON recordatorio (dia_semana, hora)
+    WHERE activo = TRUE;
+--Create index crea el indice, idx.... es el nmbre del indice(etiqueta), on ... indica en que tabla y (...) indica la columna en la que se va a buscar.
