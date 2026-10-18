@@ -157,3 +157,40 @@ CREATE INDEX idx_plantilla_categoria    ON plantilla_habito (id_categoria);
 CREATE INDEX idx_recordatorio_activo    ON recordatorio (dia_semana, hora)
     WHERE activo = TRUE;
 --Create index crea el indice, idx.... es el nmbre del indice(etiqueta), on ... indica en que tabla y (...) indica la columna en la que se va a buscar.
+
+
+
+-- ---------------------------------------------------------------------
+-- 3. Datos de prueba
+-- ---------------------------------------------------------------------
+
+-- 3.1 Usuarios
+--   Contrasenas (solo para pruebas):
+--     admin@geshab.cl: Admin1234
+--     ana@geshab.cl: Usuario123
+--     benja@geshab.cl: Usuario123
+--     carla@geshab.cl: Usuario123
+INSERT INTO usuario (id_usuario, nombre, correo, contrasena_hash, rol) VALUES
+    (1, 'Administrador',  'admin@geshab.cl', crypt('Admin1234',  gen_salt('bf', 10)), 'admin'),
+    (2, 'Ana Torres',     'ana@geshab.cl',   crypt('Usuario123', gen_salt('bf', 10)), 'usuario'),
+    (3, 'Benjamin Rojas', 'benja@geshab.cl', crypt('Usuario123', gen_salt('bf', 10)), 'usuario'),
+    (4, 'Carla Munoz',    'carla@geshab.cl', crypt('Usuario123', gen_salt('bf', 10)), 'usuario');
+
+
+-- 3.2 Categorias
+INSERT INTO categoria (id_categoria, nombre, descripcion) VALUES
+    (1, 'Salud',     'Hidratacion, alimentacion y cuidado general'),
+    (2, 'Ejercicio', 'Actividad fisica y movimiento'),
+    (3, 'Estudio',   'Habitos de aprendizaje y concentracion'),
+    (4, 'Sueno',     'Descanso y rutina nocturna');
+
+
+-- 3.3 Plantillas (la 6 esta inactiva para probar el filtro del catalogo)
+INSERT INTO plantilla_habito
+    (id_plantilla, id_categoria, nombre, descripcion, dificultad, frecuencia_sugerida, activa) VALUES
+    (1, 1, 'Tomar 2 litros de agua',  'Mantenerse hidratado durante el dia',  'baja',  'diaria',  TRUE),
+    (2, 1, 'Comer una fruta',         'Al menos una porcion de fruta al dia', 'baja',  'diaria',  TRUE),
+    (3, 2, 'Caminar 30 minutos',      'Caminata a paso moderado',             'media', 'diaria',  TRUE),
+    (4, 2, 'Entrenamiento de fuerza', 'Rutina de 45 minutos con pesas',       'alta',  'semanal', TRUE),
+    (5, 3, 'Repasar apuntes',         'Revisar la materia del dia',           'media', 'diaria',  TRUE),
+    (6, 4, 'Dormir 8 horas',          'Acostarse antes de las 23:30',         'alta',  'diaria',  FALSE);
