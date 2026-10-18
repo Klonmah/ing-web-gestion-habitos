@@ -194,3 +194,73 @@ INSERT INTO plantilla_habito
     (4, 2, 'Entrenamiento de fuerza', 'Rutina de 45 minutos con pesas',       'alta',  'semanal', TRUE),
     (5, 3, 'Repasar apuntes',         'Revisar la materia del dia',           'media', 'diaria',  TRUE),
     (6, 4, 'Dormir 8 horas',          'Acostarse antes de las 23:30',         'alta',  'diaria',  FALSE);
+
+    
+
+-- 3.4 Tareas (prioridades mezcladas, algunas completadas, algunas vencidas)
+INSERT INTO tarea (id_usuario, titulo, descripcion, fecha_limite, prioridad, completada) VALUES
+    (2, 'Entregar informe de laboratorio', 'Fisica II, seccion 3',    CURRENT_DATE + 2, 'alta',  FALSE),
+    (2, 'Comprar verduras',                NULL,                      CURRENT_DATE + 1, 'baja',  FALSE),
+    (2, 'Pagar cuenta de luz',             'Vence a fin de mes',      CURRENT_DATE - 3, 'media', FALSE), -- vencida
+    (2, 'Pedir hora al dentista',          NULL,                      CURRENT_DATE - 5, 'media', TRUE),  -- completada
+    (3, 'Estudiar para certamen',          'Calculo, unidades 1 a 3', CURRENT_DATE + 4, 'alta',  FALSE),
+    (3, 'Renovar pase escolar',            NULL,                      CURRENT_DATE - 1, 'alta',  FALSE), -- vencida
+    (3, 'Ordenar escritorio',              NULL,                      CURRENT_DATE + 7, 'baja',  TRUE),
+    (4, 'Preparar presentacion',           'Ingenieria web y movil',  CURRENT_DATE + 3, 'alta',  FALSE),
+    (4, 'Llamar a la abuela',              NULL,                      CURRENT_DATE,     'media', FALSE);
+
+
+-- 3.5 Habitos adoptados
+INSERT INTO habito
+    (id_habito, id_usuario, id_plantilla, nombre, frecuencia, meta, horario_objetivo, activo, fecha_adopcion) VALUES
+    (1, 2, 1,    'Tomar 2 litros de agua',  'diaria',  '8 vasos',  '09:00', TRUE,  CURRENT_DATE - 20),
+    (2, 3, 1,    'Tomar agua',              'diaria',  '2 litros', '10:00', TRUE,  CURRENT_DATE - 15),
+    (3, 4, 1,    'Tomar 2 litros de agua',  'diaria',  NULL,       NULL,    TRUE,  CURRENT_DATE - 2),
+    (4, 2, NULL, 'Leer 20 minutos',         'diaria',  '20 min',   '22:00', TRUE,  CURRENT_DATE - 10),
+    (5, 2, 3,    'Caminar 30 minutos',      'diaria',  '30 min',   '19:00', TRUE,  CURRENT_DATE - 12),
+    (6, 3, 4,    'Entrenamiento de fuerza', 'semanal', '2 veces',  '18:00', TRUE,  CURRENT_DATE - 30),
+    (7, 4, NULL, 'Meditar',                 'diaria',  '10 min',   '07:30', FALSE, CURRENT_DATE - 8);
+
+
+-- 3.6 Registros de cumplimiento
+-- Habito 1: racha larga, 7 dias seguidos hasta hoy (racha = 7)
+INSERT INTO registro_cumplimiento (id_habito, fecha, fecha_hora_registro)
+SELECT 1, d::date, d::date + TIME '09:15'
+FROM generate_series(CURRENT_DATE - 6, CURRENT_DATE, INTERVAL '1 day') AS d;
+
+-- Habito 2: racha cortada, cumplio hace 5 a 2 dias pero no ayer ni hoy (racha = 0)
+INSERT INTO registro_cumplimiento (id_habito, fecha, fecha_hora_registro)
+SELECT 2, d::date, d::date + TIME '10:30'
+FROM generate_series(CURRENT_DATE - 5, CURRENT_DATE - 2, INTERVAL '1 day') AS d;
+
+-- Habito 3: SIN registros (para probar el estado vacio de la pantalla de progreso)
+
+-- Habito 4: dias salteados (racha = 2: ayer y hoy)
+INSERT INTO registro_cumplimiento (id_habito, fecha, fecha_hora_registro) VALUES
+    (4, CURRENT_DATE - 6, (CURRENT_DATE - 6) + TIME '22:10'),
+    (4, CURRENT_DATE - 4, (CURRENT_DATE - 4) + TIME '22:05'),
+    (4, CURRENT_DATE - 1, (CURRENT_DATE - 1) + TIME '22:20'),
+    (4, CURRENT_DATE,     CURRENT_TIMESTAMP);
+
+-- Habito 5: 3 dias seguidos hasta ayer
+INSERT INTO registro_cumplimiento (id_habito, fecha, fecha_hora_registro)
+SELECT 5, d::date, d::date + TIME '19:40'
+FROM generate_series(CURRENT_DATE - 3, CURRENT_DATE - 1, INTERVAL '1 day') AS d;
+
+-- Habito 6 (semanal): una vez por semana las ultimas 3 semanas
+INSERT INTO registro_cumplimiento (id_habito, fecha, fecha_hora_registro) VALUES
+    (6, CURRENT_DATE - 14, (CURRENT_DATE - 14) + TIME '18:30'),
+    (6, CURRENT_DATE - 7,  (CURRENT_DATE - 7)  + TIME '18:45'),
+    (6, CURRENT_DATE - 1,  (CURRENT_DATE - 1)  + TIME '18:20');
+
+
+-- 3.7 Recordatorios (activos y desactivados)
+INSERT INTO recordatorio (id_habito, dia_semana, hora, activo) VALUES
+    (1, 1, '09:00', TRUE),   -- lunes
+    (1, 3, '09:00', TRUE),   -- miercoles
+    (1, 5, '09:00', TRUE),   -- viernes
+    (4, 7, '21:45', TRUE),   -- domingo
+    (5, 2, '19:00', TRUE),   -- martes
+    (5, 4, '19:00', FALSE),  -- jueves, desactivado
+    (6, 6, '17:30', TRUE),   -- sabado
+    (7, 1, '07:30', FALSE);  -- habito inactivo, recordatorio apagado
