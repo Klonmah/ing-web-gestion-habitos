@@ -101,3 +101,88 @@ Para levantar también el frontend, en otra terminal y en la rama `frontend`:
 npm install
 ionic serve
 ```
+
+
+---
+
+## Usuarios de prueba
+
+Los crea `database/geshab.sql`. **Solo para desarrollo.**
+
+| Correo | Contraseña | Rol |
+|---|---|---|
+| admin@geshab.cl | Admin1234 | admin |
+| ana@geshab.cl | Usuario123 | usuario |
+| benja@geshab.cl | Usuario123 | usuario |
+| carla@geshab.cl | Usuario123 | usuario |
+
+---
+
+## Modelo relacional
+
+```mermaid
+erDiagram
+    USUARIO ||--o{ TAREA : tiene
+    USUARIO ||--o{ HABITO : adopta
+    CATEGORIA ||--o{ PLANTILLA_HABITO : agrupa
+    PLANTILLA_HABITO |o--o{ HABITO : "origen (opcional)"
+    HABITO ||--o{ REGISTRO_CUMPLIMIENTO : registra
+    HABITO ||--o{ RECORDATORIO : programa
+
+    USUARIO {
+        serial id_usuario PK
+        varchar nombre
+        varchar correo UK
+        varchar contrasena_hash
+        varchar rol "usuario o admin"
+        timestamp fecha_registro
+    }
+    CATEGORIA {
+        serial id_categoria PK
+        varchar nombre UK
+        text descripcion
+    }
+    PLANTILLA_HABITO {
+        serial id_plantilla PK
+        int id_categoria FK
+        varchar nombre UK
+        text descripcion
+        varchar dificultad "baja, media o alta"
+        varchar frecuencia_sugerida "diaria o semanal"
+        boolean activa
+    }
+    TAREA {
+        serial id_tarea PK
+        int id_usuario FK
+        varchar titulo
+        text descripcion
+        date fecha_limite
+        varchar prioridad "alta, media o baja"
+        boolean completada
+        timestamp fecha_creacion
+    }
+    HABITO {
+        serial id_habito PK
+        int id_usuario FK
+        int id_plantilla FK "NULL si es propio"
+        varchar nombre
+        varchar frecuencia "diaria o semanal"
+        varchar meta
+        time horario_objetivo
+        boolean activo
+        date fecha_adopcion
+    }
+    REGISTRO_CUMPLIMIENTO {
+        serial id_registro PK
+        int id_habito FK
+        date fecha "no futura"
+        timestamp fecha_hora_registro
+    }
+    RECORDATORIO {
+        serial id_recordatorio PK
+        int id_habito FK
+        smallint dia_semana "1 lunes a 7 domingo"
+        time hora
+        boolean activo
+    }
+```
