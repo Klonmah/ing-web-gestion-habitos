@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import authRoutes from './auth.routes';
+import tareasRoutes from './tareas.routes';
 
 /**
  * Punto unico donde se montan todas las rutas de la API.
@@ -19,5 +20,6 @@ import authRoutes from './auth.routes';
 const router = Router();
 
 router.use('/auth', authRoutes);
+router.use('/tareas', tareasRoutes);
 
 export default router;
