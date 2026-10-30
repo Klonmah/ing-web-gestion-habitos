@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { getTareas, createTarea, updateTarea, deleteTarea } from '../controllers/tareas.controller';
-import { requiereAuth } from '../middlewares/auth.middleware'; // Ojo: verifica que el nombre de esta funcion sea el correcto
+import { requiereAuth } from '../middlewares/auth.middleware'; 
 
 const router = Router();
 

@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import authRoutes from './auth.routes';
 import tareasRoutes from './tareas.routes';
+import habitosRoutes from './habitos.routes';
+import registrosRoutes from './registros.routes';
 
 /**
  * Punto unico donde se montan todas las rutas de la API.
@@ -21,5 +23,7 @@ const router = Router();
 
 router.use('/auth', authRoutes);
 router.use('/tareas', tareasRoutes);
+router.use('/habitos', habitosRoutes);
+router.use('/registros', registrosRoutes);
 
 export default router;
