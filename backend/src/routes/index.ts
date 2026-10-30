@@ -3,6 +3,7 @@ import authRoutes from './auth.routes';
 import tareasRoutes from './tareas.routes';
 import habitosRoutes from './habitos.routes';
 import registrosRoutes from './registros.routes';
+import progresoRoutes from './progreso.routes';
 
 /**
  * Punto unico donde se montan todas las rutas de la API.
@@ -25,5 +26,6 @@ router.use('/auth', authRoutes);
 router.use('/tareas', tareasRoutes);
 router.use('/habitos', habitosRoutes);
 router.use('/registros', registrosRoutes);
+router.use('/progreso', progresoRoutes);
 
 export default router;

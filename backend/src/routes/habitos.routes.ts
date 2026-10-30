@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getHabitos, createHabito, updateHabito, deleteHabito } from '../controllers/habitos.controller';
+import { getHabitos, createHabito, updateHabito, deleteHabito, marcarCumplimiento } from '../controllers/habitos.controller';
 import { requiereAuth } from '../middlewares/auth.middleware';
 
 const router = Router();
@@ -11,5 +11,7 @@ router.get('/', getHabitos);
 router.post('/', createHabito);
 router.put('/:id', updateHabito);
 router.delete('/:id', deleteHabito);
+
+router.post('/:id/cumplimientos', marcarCumplimiento);
 
 export default router;

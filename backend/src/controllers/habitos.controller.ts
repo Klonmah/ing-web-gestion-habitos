@@ -105,3 +105,39 @@ export const deleteHabito = async (req: Request, res: Response, next: NextFuncti
     next(new ErrorHttp(500, 'Error al eliminar el hábito'));
   }
 };
+
+// --- NUEVO ENDPOINT (RF-03): Marcar cumplimiento ---
+const cumplimientoSchema = z.object({
+  fecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Formato de fecha inválido (YYYY-MM-DD)')
+});
+
+export const marcarCumplimiento = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+  try {
+    const id_usuario = req.usuario?.id_usuario;
+    const id_habito = req.params.id; // Toma el ID de la URL
+    const validData = cumplimientoSchema.parse(req.body);
+
+    // 1. Verificar si el habito le pertenece al usuario
+    const habitoResult = await pool.query(
+      'SELECT id_habito FROM habito WHERE id_habito = $1 AND id_usuario = $2',
+      [id_habito, id_usuario]
+    );
+
+    if (habitoResult.rows.length === 0) {
+      return next(new ErrorHttp(404, 'Hábito no encontrado o no te pertenece'));
+    }
+
+    // 2. Insertar cumplimiento
+    const result = await pool.query(
+      'INSERT INTO registro_cumplimiento (id_habito, fecha) VALUES ($1, $2) RETURNING *',
+      [id_habito, validData.fecha]
+    );
+    res.status(201).json(result.rows[0]);
+
+  } catch (error: any) {
+    if (error instanceof z.ZodError) return next(new ErrorHttp(400, 'Datos inválidos'));
+    if (error.code === '23505') return next(new ErrorHttp(400, 'Ya marcaste este hábito en esta fecha'));
+    if (error.code === '23514') return next(new ErrorHttp(400, 'La fecha no puede ser futura'));
+    next(new ErrorHttp(500, 'Error al registrar cumplimiento'));
+  }
+};
