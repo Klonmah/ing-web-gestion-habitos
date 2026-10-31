@@ -1,9 +1,11 @@
 import { Router } from 'express';
 import authRoutes from './auth.routes';
+import adminRoutes from './admin.routes';
 import tareasRoutes from './tareas.routes';
 import habitosRoutes from './habitos.routes';
 import registrosRoutes from './registros.routes';
 import progresoRoutes from './progreso.routes';
+import catalogoRoutes from './catalogo.routes';
 
 /**
  * Punto unico donde se montan todas las rutas de la API.
@@ -22,9 +24,12 @@ import progresoRoutes from './progreso.routes';
  */
 const router = Router();
 
+
 router.use('/auth', authRoutes);
+router.use('/admin', adminRoutes);
 router.use('/tareas', tareasRoutes);
 router.use('/habitos', habitosRoutes);
+router.use('/catalogo', catalogoRoutes);
 router.use('/registros', registrosRoutes);
 router.use('/progreso', progresoRoutes);
 
