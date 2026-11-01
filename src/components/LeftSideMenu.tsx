@@ -3,6 +3,7 @@ import {
     IonMenu, IonContent, IonList, IonItem, IonLabel, IonMenuToggle
 } from '@ionic/react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { cerrarSesion } from '../services/api';
 
 interface LeftSideMenuProps {
     // Qué opciones mostrar. El administrador no accede a las secciones del
@@ -30,7 +31,7 @@ const LeftSideMenu: React.FC<LeftSideMenuProps> = ({ rol = 'usuario', contentId 
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        localStorage.removeItem('usuario');
+        cerrarSesion();
         navigate('/login');
     };
 

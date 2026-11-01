@@ -1,13 +1,19 @@
 import { IonPage, IonContent, IonButton, IonHeader, IonToolbar, IonTitle, IonItem, IonLabel, IonInput, IonText, IonIcon } from '@ionic/react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
 import { logInOutline } from 'ionicons/icons';
+import { api, guardarSesion } from '../services/api';
+import type { UsuarioSesion } from '../services/api';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [cargando, setCargando] = useState(false);
+  // api.ts redirige a /login?sesion=expirada cuando el token vence (401).
+  const [params] = useSearchParams();
+  const sesionExpirada = params.get('sesion') === 'expirada';
 
   const validarPassword = (pass: string) => {
     // RNF-02: mínimo 8 caracteres, al menos una mayúscula y un dígito
@@ -15,7 +21,7 @@ const Login: React.FC = () => {
     return regex.test(pass);
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
@@ -29,15 +35,18 @@ const Login: React.FC = () => {
       return;
     }
 
-    // Simulamos un inicio de sesión exitoso como Usuario o Admin(usuario con correo que incluya "@admingeshab"), ya que necesitaríamos uso de backend para comprobar usuarios loggeados:
-    localStorage.setItem('usuario', JSON.stringify({ email }));
-
-    if (email.includes('@admingeshab')) {
-      console.log('Login de Admin exitoso');
-      navigate('/admin/plantillas'); 
-    } else {
-      console.log('Login de Usuario exitoso');
-      navigate('/inicio'); 
+    setCargando(true);
+    try {
+      const { usuario, token } = await api<{ usuario: Omit<UsuarioSesion, 'email'>; token: string }>(
+        '/auth/login',
+        { metodo: 'POST', cuerpo: { correo: email, contrasena: password }, publica: true }
+      );
+      const sesion = guardarSesion(token, usuario);
+      navigate(sesion.rol === 'admin' ? '/admin/plantillas' : '/inicio');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'No se pudo iniciar sesión.');
+    } finally {
+      setCargando(false);
     }
   };
 
@@ -81,13 +90,19 @@ const Login: React.FC = () => {
             required
           />
 
+          {sesionExpirada && !error && (
+            <IonText color="warning">
+              <p style={{ textAlign: 'center', margin: '10px 0' }}>Tu sesión expiró. Vuelve a iniciar sesión.</p>
+            </IonText>
+          )}
+
           {error && (
             <IonText color="danger">
               <p style={{ textAlign: 'center', margin: '10px 0' }}>{error}</p>
             </IonText>
           )}
 
-          <IonButton expand="block" type="submit" className="ion-margin-top" style={{'--ion-color-primary': '#2e6f5e'}}>
+          <IonButton expand="block" type="submit" disabled={cargando} className="ion-margin-top" style={{'--ion-color-primary': '#2e6f5e'}}>
             <IonIcon slot="start" icon={logInOutline} />
             Ingresar
           </IonButton>
