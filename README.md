@@ -1,5 +1,8 @@
 # App de Gestión de Hábitos y tareas
 
+
+> **Entrega 2 (backend):** las instrucciones para instalar y correr el backend, las variables de entorno y el modelo de la base de datos están en [backend/README.md](backend/README.md).
+
 # Integrantes:
 - Martin Díaz Valle
 - Gabriel Martinez Oyarce
