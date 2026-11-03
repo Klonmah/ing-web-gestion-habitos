@@ -284,3 +284,7 @@ backend/
 ├── tsconfig.json
 └── README.md
 ```
+
+## Evidencia Colecciones Postman
+
+Las colecciones de Postman en formato .json y las capturas de pantallas de distintas instancias de envío de peticiones se pueden encontrar en la carpeta 'anexos'.
