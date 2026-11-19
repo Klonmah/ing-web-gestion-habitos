@@ -30,9 +30,15 @@ import '@ionic/react/css/display.css';
  * https://ionicframework.com/docs/theming/dark-mode
  */
 
+/*
+ * Modo oscuro desactivado a proposito: el diseño de Figma es solo
+ * claro y varias pantallas usan colores fijos de modo claro (fondos
+ * #F5F6F7, menu #f8f9fa). Con dark.system.css, en un equipo con modo
+ * oscuro el texto quedaba blanco sobre fondo blanco.
+ */
 /* import '@ionic/react/css/palettes/dark.always.css'; */
 /* import '@ionic/react/css/palettes/dark.class.css'; */
-import '@ionic/react/css/palettes/dark.system.css';
+/* import '@ionic/react/css/palettes/dark.system.css'; */
 
 /* Theme variables */
 import './theme/variables.css';
