@@ -60,11 +60,9 @@ export const esquemaActualizarCategoria = esquemaCrearCategoria
 
 
 // :id llega como texto. Se exige un entero positivo; asi un
-// "/admin/plantillas/abc" responde 400 y no llega a la base.
-export const esquemaId = z.coerce
-  .number({ message: 'El id debe ser un numero' })
-  .int('El id debe ser un entero')
-  .positive('El id debe ser positivo');
+// "/admin/plantillas/abc" responde 400 y no llega a la base. El
+// esquema es comun a toda la API (schemas/comun.schema.ts).
+export { esquemaId } from './comun.schema';
 
 // GET /catalogo?categoria=&dificultad=
 // Los dos filtros son opcionales y un valor vacio ("?categoria=")

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import * as admin from '../controllers/admin.controller';
-import { validar } from '../middlewares/validar.middleware';
+import { validar, validarId } from '../middlewares/validar.middleware';
 import { requiereAuth, requiereAdmin } from '../middlewares/auth.middleware';
 import {
   esquemaCrearPlantilla,
@@ -25,14 +25,14 @@ router.use(requiereAuth, requiereAdmin);
 // Plantillas
 router.get('/plantillas', admin.listarPlantillas);
 router.post('/plantillas', validar(esquemaCrearPlantilla), admin.crearPlantilla);
-router.put('/plantillas/:id', validar(esquemaActualizarPlantilla), admin.actualizarPlantilla);
-router.delete('/plantillas/:id', admin.eliminarPlantilla);
+router.put('/plantillas/:id', validarId, validar(esquemaActualizarPlantilla), admin.actualizarPlantilla);
+router.delete('/plantillas/:id', validarId, admin.eliminarPlantilla);
 
 // Categorias
 router.get('/categorias', admin.listarCategorias);
 router.post('/categorias', validar(esquemaCrearCategoria), admin.crearCategoria);
-router.put('/categorias/:id', validar(esquemaActualizarCategoria), admin.actualizarCategoria);
-router.delete('/categorias/:id', admin.eliminarCategoria);
+router.put('/categorias/:id', validarId, validar(esquemaActualizarCategoria), admin.actualizarCategoria);
+router.delete('/categorias/:id', validarId, admin.eliminarCategoria);
 
 // Metricas (agregados anonimos)
 router.get('/metricas', admin.obtenerMetricas);

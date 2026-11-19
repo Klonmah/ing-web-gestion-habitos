@@ -29,9 +29,30 @@ export const manejadorErrores = (
   _next: NextFunction
 ): void => {
   // Errores esperados: los que lanzan los servicios a proposito.
+  // Formato unico de la API: { error, detalles? }.
   if (error instanceof ErrorHttp) {
-    res.status(error.estado).json({ error: error.message });
+    res.status(error.estado).json(
+      error.detalles ? { error: error.message, detalles: error.detalles } : { error: error.message }
+    );
     return;
+  }
+
+  // Body que no es JSON valido (p. ej. '{"titulo": }'). Lo lanza
+  // express.json() antes de llegar a las rutas, con type
+  // 'entity.parse.failed'; sin esto terminaba en 500.
+  if (typeof error === 'object' && error !== null && 'type' in error) {
+    const tipo = (error as { type: string }).type;
+    if (tipo === 'entity.parse.failed') {
+      res.status(400).json({
+        error: 'El cuerpo de la peticion no es JSON valido',
+        detalles: [{ campo: 'body', mensaje: 'Revisa comillas, comas y llaves del JSON enviado' }],
+      });
+      return;
+    }
+    if (tipo === 'entity.too.large') {
+      res.status(413).json({ error: 'El cuerpo de la peticion es demasiado grande' });
+      return;
+    }
   }
 
   // Errores de PostgreSQL que conviene traducir. El codigo 23505 es

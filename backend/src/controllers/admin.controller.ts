@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 import * as adminService from '../services/admin.service';
-import { ErrorHttp } from '../utils/ErrorHttp';
+import { ErrorHttp, errorDeCampo } from '../utils/ErrorHttp';
 import { esquemaId, esquemaFiltroCatalogo } from '../schemas/admin.schema';
 
 /**
@@ -14,7 +14,7 @@ import { esquemaId, esquemaFiltroCatalogo } from '../schemas/admin.schema';
 const leerId = (req: Request): number => {
   const resultado = esquemaId.safeParse(req.params.id);
   if (!resultado.success) {
-    throw new ErrorHttp(400, resultado.error.issues[0].message);
+    throw errorDeCampo('id', resultado.error.issues[0].message);
   }
   return resultado.data;
 };
@@ -119,7 +119,8 @@ export const listarCatalogo = async (req: Request, res: Response, next: NextFunc
 
     const filtro = esquemaFiltroCatalogo.safeParse(req.query);
     if (!filtro.success) {
-      throw new ErrorHttp(400, filtro.error.issues[0].message);
+      const problema = filtro.error.issues[0];
+      throw errorDeCampo(String(problema.path[0] ?? 'query'), problema.message);
     }
 
     res.status(200).json(await adminService.listarCatalogo(filtro.data, req.usuario.id_usuario));
