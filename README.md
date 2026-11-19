@@ -1,426 +1,380 @@
-# App de Gestión de Hábitos y tareas
+# GesHab — Gestión de hábitos saludables y tareas
 
+Aplicación web y móvil para organizar tareas personales y construir hábitos
+saludables, con registro diario de cumplimiento, rachas y un catálogo de
+hábitos mantenido por un administrador.
 
-> **Entrega 2 (backend):** las instrucciones para instalar y correr el backend, las variables de entorno y el modelo de la base de datos están en [backend/README.md](backend/README.md).
-
-# Integrantes:
-- Martin Díaz Valle
-- Gabriel Martinez Oyarce
-- Matias Labra Concha
-- Ignacio Reyes Torres
-
-# Distribución de responsabilidades
-- Ignacio Reyes Torres / ROL A - ANALISIS Y DOCUMENTACIÓN
-- Martin Díaz Valle / ROL B - UX Y ARQUITECTURA DE NAVEGACIÓN
-- Gabriel Martinez Oyarce / ROL C - UI, COMPONENTES Y 2 PANTALLAS
-- Matias Labra Concha / ROL D - FRONTEND (IONIC + REACT)
----
-
-# Descripción general del sistema
-El sistema es un gestor de hábitos hecho para ayudar a usuarios para que puedan construir, organizar y mantener rutinas diarias de manera eficiente. El objetivo principal de nuestra aplicación es fomentar tanto la constancia como la productividad personal a través de este sistema con un registro rápido y recordatorios.
-La aplicación será completamente gratuita en donde todos los usuarios registrados tienen acceso a todas las funciones de la aplicación sin restricciones de suscripción.
-
-## Índice
-1. [Justificación del problema](#justificación-del-problema)
-2. [Usuarios objetivo](#usuarios-objetivo)
-    - [Roles del Sistema](#roles-del-sistema)
-    - [Proto-personas](#proto-personas)
-3. [Requerimientos](#requerimientos)
-4. [Arquitectura de Navegación](#arquitectura-de-navegación)
-    - [Diferenciación por roles](#diferenciación-de-acceso-según-roles)
-    - [Flujos de Tareas](#flujos-de-tareas)
-    - [Puntos críticos de interacción](#puntos-críticos-de-interacción)
-    - [Justificación Técnica](#justificación-técnica)
-5. [Bocetos UI/UX](#bocetos-uiux)
-6. [Tecnologías y Librerías](#tecnologías)
+Esta es la rama **`backend`**: contiene la API REST en Node.js, Express y
+TypeScript sobre PostgreSQL. El cliente Ionic + React está en la rama
+[`frontend`](https://github.com/Klonmah/ing-web-gestion-habitos/tree/frontend).
 
 ---
 
-## Justificación del problema
-El sedentarismo y la falta de organización personal afectan negativamente el bienestar general. Más de 1.400 millones de personas adultas suelen abandonar sus metas de actividad física o productividad. El desarrollo de esta plataforma permitirá centralizar la gestión de hábitos y tareas en una interfaz ágil, reduciendo el abandono y fomentando la constancia a través de rachas de cumplimiento.
+## Integrantes y responsabilidades
 
----
-
-## Usuarios objetivo (quienes usarán la aplicación)
-Realmente un gestor de hábitos se puede hacer para una amplia variedad de usuarios que busquen mejorar su constancia, poder organizar sus rutinas o alcanzar metas específicas, como por ejemplo tenemos a estudiantes, profesionales, deportistas, diseñadores, etc.
-
----
-
-### Roles del Sistema
-- **Usuario:** Gestiona sus propias tareas y hábitos. Su experiencia e información es individual y privada.
-- **Administrador:** Usuario encargado en gestionar generalmente la plataforma sin acceder a los datos personales de los usuarios.
-
----
-
-## Proto-personas
-> **Nota:** Las siguientes proto-personas corresponden a perfiles hipotéticos. No representan resultados obtenidos de usuarios reales.
-
-### Proto-persona 1: Usuario Estándar enfocado en la constancia
-**Nombre ficticio:** Anselmo
-**Tipo de usuario o rol:** Usuario
-**Características:** Universitario de 22 años con poco tiempo libre. Combina sus clases con entrenamientos en el gimnasio.
-**Necesidades principales:** 
-- Registrar rápidamente el cumplimiento de un hábito.
-- Privacidad absoluta sobre su información.
-- Conocer su porcentaje de cumplimiento semanal.
-**Objetivos de uso:** Unificar sus recordatorios y mantener rachas de hábitos para no perder la motivación.
-**Dificultades/Frustraciones:** Aplicaciones lentas o que requieren más de 4 clics para registrar una tarea.
-**Funcionalidades que utilizaría:** Gestión de tareas (RF-01), Registro de cumplimiento (RF-03), Panel de progreso (RF-04) y Recordatorios (RF-05).
-**Dispositivo probable:** Principalmente teléfono móvil.
-
-### Proto-persona 2: Usuario enfocado en la organización laboral
-**Nombre ficticio:** lucy
-**Tipo de usuario o rol:** Usuario
-**Características:** Profesional de 28 años encargada de liderar varios proyectos simultáneos por lo que mantiene una agenda bastante ocupada y ajustada.
-**Necesidades principales:**
-- Planificar hábitos para días específicos de la semana.
-- Poder ver de forma clara su agenda de tareas para poder organizar sus mañanas de manera rápida.
-**Objetivos de uso:** Poder agendar sus rutinas diarias para poder ser eficiente, evitar la procrastinación en sus metas personales y tener un balance en el día a día
-**Dificultades/Frustraciones:** Aplicaciones que mezclan todas las tareas en una sola lista desorganizada o que no permite configurar hábitos para días específicos.
-**Funcionalidades que utilizaría:** Gestión de tareas (RF-01), Categorización/Filtros de hábitos (RF-02), Registro de cumplimiento (RF-03) y Recordatorios (RF-05).
-**Dispositivo probable:** Teléfono móvil.
-
----
-
-### Requerimientos Funcionales
-| ID | Requerimiento funcional | Rol |
+| Integrante | Rol | Responsabilidad |
 |---|---|---|
-| **RF-01** | Permitir al usuario crear, consultar, editar y eliminar tareas personales (título, descripción, fecha límite y prioridad). | Usuario |
-| **RF-02** | Permitir adoptar un hábito del catálogo o definir uno propio (frecuencia, meta, horario). | Usuario |
-| **RF-03** | Registrar la fecha de cumplimiento y actualizar la racha de días consecutivos. | Usuario |
-| **RF-04** | Permitir consultar porcentaje de cumplimiento semanal y mensual. | Usuario |
-| **RF-05** | Notificar al usuario en el día y hora configurados para el hábito. | Usuario |
-| **RF-06** | Filtrar catálogo de hábitos por categoría y nivel de dificultad. | Usuario |
-| **RF-07** | Permitir al administrador crear, editar y desactivar plantillas de hábitos (sin eliminarlas si están en uso). | Admin |
-| **RF-08** | Gestionar categorías y consultar métricas agregadas anonimizadas (acceso denegado con 403 a usuarios normales). | Admin |
-
-### Requerimientos No Funcionales
-Los requerimientos no funcionales establecen condiciones de calidad que deberá cumplir la plataforma.
-
-- **RNF-01 (Rendimiento):** Desplegar el listado de hábitos del día en máximo 2 segundos (conexión 4G).
-- **RNF-02 (Seguridad):** Contraseñas con bcrypt, mínimo 8 caracteres alfanuméricos y rechazo de JWT expirado (>24h).
-- **RNF-03 (Usabilidad):** Registrar un hábito en máximo 2 interacciones desde el inicio.
-- **RNF-04 (Accesibilidad):** Contraste mínimo 4.5:1 y escalado de texto hasta 200%.
-- **RNF-05 (Compatibilidad):** Renderizar sin scroll horizontal entre 360 y 1280 píxeles.
+| Ignacio Reyes Torres | A | Base de datos (`backend/database/geshab.sql`) y documentación |
+| Gabriel Martínez Oyarce | B | Servidor, autenticación JWT y seguridad |
+| Matías Labra Concha | C | CRUD de usuario (tareas, hábitos, registros, progreso) y pruebas |
+| Martín Díaz Valle | D | CRUD de administración e integración con el frontend |
 
 ---
 
-## Arquitectura de Navegación
+## El problema
+
+Mantener un hábito falla casi siempre por lo mismo: la constancia no se ve.
+Las personas abandonan porque no tienen a la vista cuánto llevan ni qué
+rompieron, y porque registrar el avance cuesta más que el hábito mismo.
+
+GesHab aborda las dos cosas: el registro de un cumplimiento toma dos
+interacciones desde la pantalla principal, y el progreso se muestra como
+racha de días consecutivos y porcentaje semanal y mensual.
+
+El sistema tiene dos roles. El **usuario** gestiona sus propias tareas y
+hábitos, y su experiencia es individual. El **administrador** mantiene el
+catálogo de hábitos saludables y sus categorías, y nunca accede a los datos
+personales de nadie: sus métricas son agregadas y anónimas.
+
 ---
 
-### 1.Rutas Principales y Secundarias:
+## Arquitectura
 
-**Rutas públicas:**
-
-| Ruta               | Vista           | Redirección                                                                                | Descripción                                                                                       |
-| ------------------ | --------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
-| `/login`           | Login           | Tiene sesión de Usuario -> `/inicio`, Tiene sesión de Administrador -> `/admin/plantillas` | Permite al Usuario ingresar a la App con los datos de su cuenta                                   |
-| `/registro`        | Registro        | Tiene sesión de Usuario -> `/inicio`, Tiene sesión de Administrador -> `/admin/plantillas` | Permite Crear una nueva cuenta para el Usuario.                                                   |
-| `/acceso-denegado` | Acceso Denegado | Ninguna                                                                                    | Página a la cual se envían a las personas que intentan entrar a rutas de administrador sin serlo. |
-
-
-**Rutas Protegidas del Usuario:**
-
-| Ruta        | Vista      | RF           | Descripción                                                                                                                |
-| ----------- | ---------- | ------------ | -------------------------------------------------------------------------------------------------------------------------- |
-| `/inicio`   | Inicio     | RF-03        | Lista los hábitos del día. Al marcar uno como cumplido se guarda la fecha y hora del cumplimiento y se actualiza su racha. |
-| `/tareas`   | Mis tareas | RF-01        | Lista las tareas del usuario con su fecha límite y prioridad, y permite crear, editar o eliminar cada una                  |
-| `/catalogo` | Catálogo   | RF-02, RF-06 | Muestra plantillas de hábitos filtrables por categoría y dificultad, y permite adoptarlas                                  |
-| `/progreso` | Progreso   | RF-04        | Permite ver el porcentaje de cumplimiento de hábitos de forma semanal y mensual.                                           |
-| `/perfil`   | Perfil     |              | Permite ver y cambiar el nombre de usuario, foto y sirve para entrar a las configuraciones.                                |
-
-Si no hay sesión, todas redirigen a `/login`.
-
- **Rutas Secundarias del Usuario:**
-
-| Ruta                  | Vista               | Padre                   | RF           | Descripción                                                                                                                                   |
-| --------------------- | ------------------- | ----------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/tareas/nueva`       | Nueva tarea         | `/tareas`               | RF-01        | Página para que el usuario pueda crear una nueva tarea.                                                                                       |
-| `/tareas/:id/editar`  | Editar tarea        | `/tareas`               | RF-01        | Permite al usuario cambiar la información de una tarea ya creada o eliminarla.                                                                |
-| `/habitos/nuevo`      | Nuevo hábito propio | `/catalogo` o `/inicio` | RF-02        | Permite al usuario crear un nuevo hábito desde cero o precargar uno de `/catalogo`.                                                           |
-| `/habitos/:id`        | Detalle del hábito  | `/inicio`               | RF-02, RF-03 | Muestra la racha actual, el historial de cumplimientos (con fecha y hora) y el acceso a editar el hábito.                                     |
-| `/habitos/:id/editar` | Editar hábito       | `/habitos/:id`          | RF-02        | Página que permite al usuario editar los datos del hábito y eliminarlo.                                                                       |
-| `/recordatorios`      | Recordatorios       | `/perfil`               | RF-05        | Permite al Usuario gestionar sus notificaciones, para ver qué hábito necesita recordatorio, cuál no y a qué hora debe llegar el recordatorio. |
-| `/configuraciones`    | Configuraciones     | `/perfil`               |              | Permite cambiar entre el modo oscuro y el claro"y cerrar sesión.                                                                              |
-
-Si no hay sesión, todas redirigen a `/login`.
-
-**Rutas Protegidas del Administrador:**
-
-| Ruta                           | Vista                 | RF    | Descripción                                                                                                                             |
-| ------------------------------ | --------------------- | ----- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `/admin/plantillas`            | Gestión de Plantillas | RF-07 | Página en la cual el administrador podrá decidir si crear, editar o desactivar una plantilla (no se pueden desactivar si están en uso). |
-| `/admin/plantillas/nueva`      | Nueva plantilla       | RF-07 | Página en la cual el Administrador creará una nueva plantilla.                                                                          |
-| `/admin/plantillas/:id/editar` | Editar plantilla      | RF-07 | Página en la cual el Administrador podrá editar una plantilla por su ID.                                                                |
-| `/admin/categorias-metricas`   | Categorías y métricas | RF-08 | Permite gestionar categorías y consultar métricas agregadas y anonimizadas del uso de la app                                            |
-
-Todas las rutas de administrador requieren sesión activa y rol de administrador. Sin sesión → `/login`. Usuario normal → `/acceso-denegado`.
-
-**Rutas especiales:**
-
-| Ruta | Vista                                                                                 | Redirección                                                                     | Descripción                                                                 |
-| ---- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `/`  | Ninguna (solo redirige a inicio o login o admin/plantillas dependiendo de la persona) | Sin sesión → `/login`; usuario → `/inicio`; administrador → `/admin/plantillas` | Ruta raíz de la aplicación.                                                 |
-| `*`  | Página no encontrada (404)                                                            | Ninguna                                                                         | Se muestra cuando la URL no existe y ofrece un botón para volver al inicio. |
-
-### 2. Relaciones jerárquicas entre vistas
-
-La aplicación se organiza mediante una estructura jerárquica en la cual solo se puede acceder a ciertas páginas si la persona que ingresa es un Usuario registrado o un Administrador.
-
-```text
-Aplicación
-│
-├── Rutas públicas
-│   ├── / (redirige según sesión y rol)
-│   ├── /login 
-│   ├── /registro 
-│   ├── /acceso-denegado 
-│   └── * (Página no encontrada)
-│
-└── Rutas protegidas
-    │
-    ├── Usuario
-    │   ├── /inicio 
-    │   │   └── /habitos/:id 
-    │   │       └── /habitos/:id/editar 
-    │   ├── /tareas 
-    │   │   ├── /tareas/nueva 
-    │   │   └── /tareas/:id/editar 
-    │   ├── /catalogo 
-    │   │   └── /habitos/nuevo 
-    │   ├── /progreso 
-    │   └── /perfil 
-    │       ├── /recordatorios 
-    │       └── /configuraciones 
-    │
-    └── Administrador
-        ├── /admin/plantillas 
-        │   ├── /admin/plantillas/nueva 
-        │   └── /admin/plantillas/:id/editar
-        └── /admin/categorias-metricas 
+```
+Frontend (Ionic + React)          Backend (Express + TypeScript)
+   src/services/api.ts   ──HTTP──▶   src/routes
+                                        │
+                                     src/middlewares   (JWT, rol, validación)
+                                        │
+                                     src/controllers
+                                        │
+                                     src/services      (lógica y SQL)
+                                        │
+                                     PostgreSQL
 ```
 
-*Nota: `/habitos/nuevo` aparece bajo `/catalogo`, pero también se puede acceder desde `/inicio`.*
+Las capas están separadas de forma que el controlador no escribe SQL y el
+servicio no conoce HTTP. El frontend no importa código del backend: ambos se
+comunican únicamente por la API REST.
 
-## Diferenciación de acceso según roles
+### Estructura del repositorio
 
-La aplicación controla el acceso a diferentes funcionalidades dependiendo del rol de la persona que entre al sistema, la cual tiene los siguientes roles principales:
-
-- **Usuario**
-- **Administrador**
-
-### Matriz de acceso por rol
-
-
-|                     Funcionalidad                      |  RF   | Usuario | Administrador |
-| :----------------------------------------------------: | :---: | :-----: | :-----------: |
-|       Crear, consultar, editar y eliminar tareas       | RF-01 |    ✓    |       -       |
-|             Adoptar un hábito del catálogo             | RF-02 |    ✓    |       -       |
-|             Crear y editar hábitos propios             | RF-02 |    ✓    |       -       |
-|     Filtrar el catálogo por categoría y dificultad     | RF-06 |    ✓    |       -       |
-|   Registrar cumplimiento de un hábito y ver su racha   | RF-03 |    ✓    |       -       |
-| Consultar porcentaje de cumplimiento semanal y mensual | RF-04 |    ✓    |       -       |
-|                Configurar recordatorios                | RF-05 |    ✓    |       -       |
-|            Editar perfil y configuraciones             |   -   |    ✓    |       -       |
-|                     Cerrar sesión                      |   -   |    ✓    |       ✓       |
-|    Crear, editar y desactivar plantillas de hábitos    | RF-07 |    -    |       ✓       |
-|                  Gestionar categorías                  | RF-08 |    -    |       ✓       |
-|      Consultar métricas agregadas y anonimizadas       | RF-08 |    -    |       ✓       |
-### Acceso del Usuario 
-El usuario tiene acceso a las funcionalidades relacionadas con la gestión de sus propios hábitos y tareas. 
-Podrá:
-- Crear, editar y eliminar tareas.
-- Adoptar hábitos del catálogo o crear hábitos propios.
-- Registrar el cumplimiento de sus hábitos y consultar su racha.
-- Consultar su porcentaje de cumplimiento semanal y mensual.
-- Configurar recordatorios.
-- Editar su perfil y configuraciones.
-
-El usuario no podrá acceder a las rutas de administración ni a la información de otros usuarios.
-### Acceso del Administrador 
-El administrador es responsable de la gestión general de la plataforma. 
-Podrá: 
-- crear, editar y desactivar plantillas de hábitos.
-- gestionar las categorías.
-- consultar métricas agregadas y anonimizadas.
-
- El administrador no tiene acceso a las tareas ni a los hábitos personales de los usuarios.
- 
-### Control de acceso a rutas
- 
- La diferenciación por roles se aplica tanto en la interfaz como en las rutas de la aplicación. El menú muestra solo las opciones correspondientes al rol, y las rutas protegidas verifican la sesión y el rol antes de mostrarse: sin sesión se redirige a `/login`, y un usuario que intenta entrar a una ruta de administrador se redirige a `/acceso-denegado`. Además, el servidor valida el rol en cada solicitud y responde 403 ante un acceso no autorizado (RF-08).
- 
- Por ejemplo:
-```text
-# Públicas
-/login
-/registro
-/acceso-denegado
-
-# Usuario 
-/inicio
-/tareas
-/tareas/nueva
-/tareas/:id/editar
-/catalogo
-/habitos/nuevo
-/habitos/:id
-/habitos/:id/editar
-/progreso
-/perfil
-/recordatorios
-/configuraciones
-
-# Administrador
-/admin/plantillas
-/admin/plantillas/nueva
-/admin/plantillas/:id/editar
-/admin/categorias-metricas
 ```
-
-## Flujos de Tareas
-
-Los flujos de tareas (*task flows*) representan la secuencia de acciones que realiza un usuario para completar una actividad específica dentro de la aplicación.
-
-Se consideran tres flujos principales, todos asociados al rol **Usuario**.
+backend/
+├── database/geshab.sql     Script reproducible de la base
+├── src/
+│   ├── config/             Pool de conexiones a PostgreSQL
+│   ├── routes/             Qué URL corresponde a qué controlador
+│   ├── controllers/        Leen el request y arman la respuesta
+│   ├── services/           Lógica de negocio y consultas SQL
+│   ├── middlewares/        JWT, rol admin, validación, errores
+│   ├── schemas/            Reglas de validación con zod
+│   ├── types/              Extensión del tipo Request de Express
+│   └── utils/              ErrorHttp
+├── Dockerfile
+└── package.json
+docker-compose.yml
+```
 
 ---
 
-### Task Flow 1: Registrar el cumplimiento de un hábito
+## Requisitos previos
 
-**Rol:** Usuario
+- Node.js 18 o superior
+- PostgreSQL 14 o superior, con `psql` disponible en la terminal
+- Git
 
-**Objetivo:** marcar un hábito del día como cumplido y actualizar su racha, en un solo toque desde la pantalla de inicio (RF-03, RNF-03).
+Para el despliegue con contenedores basta con Docker; no hace falta instalar
+Node ni PostgreSQL.
 
-```text
-Inicio de sesión (si no hay sesión activa)
-      ↓
-Inicio (/inicio)
-      ↓
-Visualizar hábitos del día
-      ↓
-Marcar el hábito como cumplido (1 toque)
-      ↓
-¿Registro exitoso?
-   ↓          ↓
-  No          Sí
-   ↓           ↓
-Mostrar      Guardar fecha y hora
-error y      del cumplimiento
-permitir        ↓
-reintentar   Actualizar racha
-                ↓
-             Mostrar confirmación visual
-```
 ---
 
-### Task Flow 2: Crear una tarea
+## Opción A: despliegue con Docker (recomendado)
 
-**Rol:** Usuario
+Levanta PostgreSQL y la API con un solo comando. La base se crea y se puebla
+sola con `backend/database/geshab.sql` la primera vez.
 
-**Objetivo:** registrar una nueva tarea con su fecha límite y prioridad (RF-01).
+```bash
+git clone -b backend https://github.com/Klonmah/ing-web-gestion-habitos.git
+cd ing-web-gestion-habitos
 
-```text
-Inicio (/inicio)
-      ↓
-Mis tareas (/tareas)
-      ↓
-Seleccionar "Nueva tarea"
-      ↓
-Nueva tarea (/tareas/nueva)
-      ↓
-Ingresar título, descripción, fecha límite y prioridad
-      ↓
-Guardar tarea
-      ↓
-¿Datos válidos?
-   ↓          ↓
-  No          Sí
-   ↓           ↓
-Mostrar      Registrar tarea
-errores         ↓
-   ↓         Mostrar confirmación
-Corregir        ↓
-datos        Volver a "Mis tareas"
-```
----
-
-### Task Flow 3: Adoptar un hábito del catálogo
----
-
-**Rol:** Usuario
-
-**Objetivo:** incorporar una plantilla del catálogo como hábito propio, ajustando su frecuencia, meta y horario (RF-02, RF-06).
-
-```text
-Inicio (/inicio)
-      ↓
-Catálogo (/catalogo)
-      ↓
-Filtrar por categoría y dificultad
-      ↓
-Seleccionar una plantilla
-      ↓
-Seleccionar "Adoptar"
-      ↓
-Nuevo hábito (/habitos/nuevo) con datos precargados
-      ↓
-Ajustar frecuencia, meta y horario
-      ↓
-Guardar hábito
-      ↓
-¿Datos válidos?
-   ↓          ↓
-  No          Sí
-   ↓           ↓
-Mostrar      Registrar hábito
-errores         ↓
-   ↓         Mostrar confirmación
-Corregir        ↓
-datos        Volver a "Inicio" con el hábito en la lista del día
+cp docker-env.example .env      # completar JWT_SECRET
+docker compose up --build
 ```
 
-### Puntos críticos de interacción
+La API queda en `http://localhost:3000` y PostgreSQL en el puerto 5432.
+Para comprobarlo: `http://localhost:3000/salud`.
 
-Los puntos críticos de interacción corresponden a aquellas acciones o momentos del sistema en los que una interfaz poco clara, una validación insuficiente o una navegación compleja puede afectar significativamente la experiencia del usuario.
+Para detener los contenedores y borrar también los datos:
 
-Para esta aplicación se identifican los siguientes puntos críticos:
+```bash
+docker compose down -v
+```
 
-1. **Inicio de sesión, registro y acceso según rol:** El sistema deberá informar con mensajes claros cuando las credenciales sean incorrectas, y en el registro deberá mostrar las reglas de la contraseña (mínimo 8 caracteres alfanuméricos, RNF-02) indicando cuáles se cumplen mientras el usuario escribe. Una vez autenticado, deberá redirigir a la vista correspondiente al rol (`/inicio` o `/admin/plantillas`) e impedir el acceso a rutas no autorizadas. Cuando la sesión expire , deberá enviar al usuario a `/login` con un aviso, sin mostrar pantallas rotas.
+---
 
-2. **Registro del cumplimiento de un hábito:** Es la acción más frecuente de la app, por lo que debe requerir máximo 2 interacciones desde el inicio (RNF-03). El check debe ser lo bastante grande para tocarse fácilmente en móvil, dar retroalimentación inmediata (cambio de estado y actualización visible de la racha) y permitir reintentar si el registro falla.
+## Opción B: instalación local
 
-3. **Formularios de tareas y hábitos:** El sistema deberá indicar qué campos son obligatorios, mostrar los errores junto al campo correspondiente y conservar lo ya escrito cuando haya un error, para que el usuario no tenga que ingresarlo de nuevo. Al guardar, deberá confirmar que la operación se realizó.
+Todos los comandos se ejecutan desde la carpeta `backend/`.
 
-4. **Adopción de un hábito desde el catálogo:** Los filtros por categoría y dificultad (RF-06) deben ser visibles y fáciles de limpiar. Al adoptar una plantilla, el formulario debe abrirse con los datos precargados y editables, dejando claro que se está creando un hábito propio a partir de ella.
+### 1. Clonar el repositorio en la rama `backend`
 
-5. **Acciones irreversibles:** Eliminar una tarea o un hábito, o desactivar una plantilla, deberá pedir confirmación explícita y describir la consecuencia. En el caso de las plantillas en uso (RF-07), la interfaz deberá explicar por qué no se pueden eliminar y ofrecer desactivarlas.
+```bash
+git clone -b backend https://github.com/Klonmah/ing-web-gestion-habitos.git
+cd ing-web-gestion-habitos/backend
+```
 
-6. **Visualización de progreso y datos:** El porcentaje de cumplimiento semanal y mensual (RF-04) y la racha deben presentarse con un número claro además del gráfico, y sin depender solo del color para transmitir el estado (contraste mínimo 4.5:1 y texto escalable hasta 200%, RNF-04). Cuando aún no hay datos, la vista deberá mostrar un estado vacío que guíe al usuario a su primer hábito. En las métricas del administrador (RF-08), los datos se mostrarán agregados y anonimizados.
+### 2. Crear la base de datos
 
-7. **Cambio entre versión web y móvil:** La ubicación de los componentes cambia según el dispositivo (barra inferior en móvil, menú lateral en web), pero las funcionalidades, etiquetas, orden de las secciones y patrones de interacción se mantienen iguales. La interfaz debe renderizar sin scroll horizontal entre 360 y 1280 píxeles (RNF-05), de modo que el usuario no necesite aprender la app de nuevo al cambiar de dispositivo.{
+El script crea la base `geshab` desde cero: tablas, claves, restricciones,
+índices y datos de prueba. Si la base ya existe, la borra y la vuelve a
+crear, por lo que se puede ejecutar las veces que sea necesario.
+
+```bash
+psql -U postgres -f database/geshab.sql
+```
+
+> En Windows, si `psql` no se reconoce, hay que agregar la carpeta `bin` de
+> PostgreSQL (por ejemplo `C:\Program Files\PostgreSQL\18\bin`) a la variable
+> de entorno `Path` y reiniciar la terminal.
+
+### 3. Configurar las variables de entorno
+
+```bash
+cp .env.example .env
+```
+
+| Variable | Descripción | Ejemplo |
+|---|---|---|
+| `PORT` | Puerto del servidor | `3000` |
+| `DB_HOST` | Host de PostgreSQL | `localhost` |
+| `DB_PORT` | Puerto de PostgreSQL | `5432` |
+| `DB_NAME` | Nombre de la base | `geshab` |
+| `DB_USER` | Usuario de PostgreSQL | `postgres` |
+| `DB_PASSWORD` | Contraseña de ese usuario | — |
+| `JWT_SECRET` | Clave de firma de los tokens (larga y aleatoria) | — |
+| `JWT_EXPIRES_IN` | Duración del token (RNF-02) | `24h` |
+| `CORS_ORIGIN` | Orígenes del frontend autorizados, separados por coma | `http://localhost:5173,http://localhost:8100` |
+
+El archivo `.env` está en `.gitignore` y **nunca** se sube al repositorio.
+Cada integrante crea el suyo con su propia contraseña de PostgreSQL.
+
+Para generar un `JWT_SECRET`:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
+```
+
+### 4. Instalar dependencias
+
+```bash
+npm install
+```
+
+---
+
+## Seguridad implementada
+
+| Medida | Dónde |
+|---|---|
+| Contraseñas con bcrypt (10 rondas) | `src/services/auth.service.ts` |
+| Reglas de contraseña: 8 caracteres, una mayúscula y un número | `src/schemas/auth.schema.ts` |
+| JWT firmado con expiración de 24 h (RNF-02) | `src/services/auth.service.ts` |
+| Rutas protegidas y guard de rol (401 / 403) | `src/middlewares/auth.middleware.ts` |
+| Validación de entrada con zod | `src/middlewares/validar.middleware.ts` |
+| Consultas parametrizadas contra inyección SQL | Toda la capa de servicios |
+| Errores sin filtrar detalles internos | `src/middlewares/error.middleware.ts` |
+| Cabeceras de seguridad con helmet y `X-Powered-By` desactivado | `src/index.ts` |
+| Límite de 10 intentos por IP cada 15 min en `/api/auth` | `src/index.ts` |
+| Secretos fuera del repositorio (`.env` en `.gitignore`) | — |
+
+El registro público siempre crea cuentas con rol `usuario`: el campo `rol` no
+se acepta en el body y la base lo fija por defecto. El rol `admin` se asigna
+directamente en la base de datos.
+
+---
+
+## Ejecución
+
+```bash
+npm run dev
+```
+
+El servidor queda en `http://localhost:3000`. Para revisar que esté conectado a la base se puede abrir `http://localhost:3000/salud`, que debería responder `"estado": "ok"`.
+
+### Endpoints
+
+Todas las rutas empiezan con `/api`. Las que dicen Usuario o Admin necesitan el token que devuelve el login, enviado en el header `Authorization: Bearer <token>`.
+
+| Método | Ruta | Acceso | Qué hace |
+|---|---|---|---|
+| POST | `/api/auth/registro` | Público | Crea una cuenta nueva (siempre con rol usuario) |
+| POST | `/api/auth/login` | Público | Inicia sesión y devuelve el token |
+| GET | `/api/auth/perfil` | Usuario | Datos del usuario que inició sesión |
+| GET, POST | `/api/tareas` | Usuario | Listar y crear tareas (RF-01) |
+| PUT, DELETE | `/api/tareas/:id` | Usuario | Editar y borrar una tarea |
+| GET, POST | `/api/habitos` | Usuario | Listar y crear hábitos (RF-02) |
+| PUT, DELETE | `/api/habitos/:id` | Usuario | Editar y borrar un hábito |
+| POST | `/api/habitos/:id/cumplimientos` | Usuario | Marcar un hábito como cumplido (RF-03) |
+| GET, POST | `/api/registros` | Usuario | Listar y crear registros de cumplimiento |
+| PUT, DELETE | `/api/registros/:id` | Usuario | Editar y borrar un registro |
+| GET | `/api/progreso?periodo=semanal` | Usuario | Porcentaje de cumplimiento y rachas (RF-04). También acepta `mensual` |
+| GET | `/api/catalogo?categoria=&dificultad=` | Usuario | Plantillas activas con filtros (RF-06) |
+| GET, POST | `/api/admin/plantillas` | Admin | Listar y crear plantillas (RF-07) |
+| PUT, DELETE | `/api/admin/plantillas/:id` | Admin | Editar y borrar plantillas (no se puede borrar si alguien la adoptó) |
+| GET, POST | `/api/admin/categorias` | Admin | Listar y crear categorías (RF-08) |
+| PUT, DELETE | `/api/admin/categorias/:id` | Admin | Editar y borrar categorías |
+| GET | `/api/admin/metricas` | Admin | Métricas generales sin datos personales (RF-08) |
+
+Si no se manda el token la respuesta es 401, y si un usuario normal intenta entrar a `/api/admin` la respuesta es 403.
+
+Para levantar también el frontend, en otra terminal y en la rama `frontend`:
+
+```bash
+npm install
+ionic serve
+```
 
 
-### ### Justificación Técnica
+---
 
-La arquitectura de navegación se diseñó considerando **usabilidad, eficiencia de interacción, claridad estructural y escalabilidad**, para facilitar el acceso a las funcionalidades según el rol de cada usuario.
+## Usuarios de prueba
 
-#### Usabilidad
-La navegación es simple y predecible: las cinco secciones principales (Inicio, Mis tareas, Catálogo, Progreso y Perfil) son las mismas en móvil y en web, y solo cambia su contenedor (barra inferior o menú lateral). Las tareas y los hábitos se tratan como elementos distintos para que no se mezclen en una misma lista.
+Los crea `database/geshab.sql`. **Solo para desarrollo.**
 
-#### Eficiencia de interacción
-Las acciones frecuentes requieren pocos pasos. Registrar el cumplimiento de un hábito se hace con un toque desde Inicio (RNF-03), y adoptar un hábito del catálogo abre el formulario con los datos precargados, de modo que el usuario solo los ajusta.
+| Correo | Contraseña | Rol |
+|---|---|---|
+| admin@geshab.cl | Admin1234 | admin |
+| ana@geshab.cl | Usuario123 | usuario |
+| benja@geshab.cl | Usuario123 | usuario |
+| carla@geshab.cl | Usuario123 | usuario |
 
-#### Claridad estructural
-Las rutas se dividen en públicas y protegidas, y las de administrador cuelgan del prefijo `/admin`. Así se aplica un criterio de acceso por grupo y cada vista tiene una única responsabilidad: Inicio registra el cumplimiento, y el Detalle del hábito muestra su racha e historial.
+---
 
-#### Escalabilidad
-Un nuevo rol se incorpora como un grupo de rutas con su propio criterio de acceso, sin modificar las existentes, y las nuevas secciones se agregan como rutas hijas de una vista actual. Además, el servidor valida el rol en cada solicitud (RF-08), por lo que la estructura puede crecer sin comprometer la seguridad.
+## Modelo relacional
 
-## Bocetos UI/UX
-[Enlace a nuestro Figma] .....
+```mermaid
+erDiagram
+    USUARIO ||--o{ TAREA : tiene
+    USUARIO ||--o{ HABITO : adopta
+    CATEGORIA ||--o{ PLANTILLA_HABITO : agrupa
+    PLANTILLA_HABITO |o--o{ HABITO : "origen (opcional)"
+    HABITO ||--o{ REGISTRO_CUMPLIMIENTO : registra
+    HABITO ||--o{ RECORDATORIO : programa
 
-## Tecnologías
-- **Frontend:** Ionic Framework con React, TypeScript.
-- **Estilos:** TailwindCSS / CSS.
-- **Librerías principales:** 
+    USUARIO {
+        serial id_usuario PK
+        varchar nombre
+        varchar correo UK
+        varchar contrasena_hash
+        varchar rol "usuario o admin"
+        timestamp fecha_registro
+    }
+    CATEGORIA {
+        serial id_categoria PK
+        varchar nombre UK
+        text descripcion
+    }
+    PLANTILLA_HABITO {
+        serial id_plantilla PK
+        int id_categoria FK
+        varchar nombre UK
+        text descripcion
+        varchar dificultad "baja, media o alta"
+        varchar frecuencia_sugerida "diaria o semanal"
+        boolean activa
+    }
+    TAREA {
+        serial id_tarea PK
+        int id_usuario FK
+        varchar titulo
+        text descripcion
+        date fecha_limite
+        varchar prioridad "alta, media o baja"
+        boolean completada
+        timestamp fecha_creacion
+    }
+    HABITO {
+        serial id_habito PK
+        int id_usuario FK
+        int id_plantilla FK "NULL si es propio"
+        varchar nombre
+        varchar frecuencia "diaria o semanal"
+        varchar meta
+        time horario_objetivo
+        boolean activo
+        date fecha_adopcion
+    }
+    REGISTRO_CUMPLIMIENTO {
+        serial id_registro PK
+        int id_habito FK
+        date fecha "no futura"
+        timestamp fecha_hora_registro
+    }
+    RECORDATORIO {
+        serial id_recordatorio PK
+        int id_habito FK
+        smallint dia_semana "1 lunes a 7 domingo"
+        time hora
+        boolean activo
+    }
+```
+
+
+### Relaciones
+
+| Relación | Tipo | Qué pasa si se borra el padre |
+|---|---|---|
+| usuario → tarea | 1 a N | CASCADE |
+| usuario → habito | 1 a N | CASCADE |
+| categoria → plantilla_habito | 1 a N | RESTRICT |
+| plantilla_habito → habito | 1 a N (opcional) | RESTRICT |
+| habito → registro_cumplimiento | 1 a N | CASCADE |
+| habito → recordatorio | 1 a N | CASCADE |
+
+Usamos CASCADE en lo que es de cada usuario: si se borra una cuenta, se borran también sus tareas, hábitos, cumplimientos y recordatorios, ya que ya no le serviríoa a nadie más.
+
+Usamos RESTRICT en el catálogo, así la base no deja borrar una plantilla que algún usuario ya adoptó (esto es lo que pide RF-07), ni una categoría que todavía tenga plantillas.
+
+En `habito`, la columna `id_plantilla` puede ser NULL. Si el hábito viene del catálogo apunta a su plantilla, y si el usuario lo creó desde cero queda en NULL. Así los dos casos de RF-02 caben en una sola tabla.
+
+### Restricciones
+
+- El correo de cada usuario es único y tiene que tener formato de correo.
+- El rol solo puede ser `usuario` o `admin`, y por defecto es `usuario`.
+- Un usuario no puede adoptar dos veces la misma plantilla.
+- Un hábito no se puede marcar dos veces el mismo día. Esto evita que alguien infle su racha.
+- La fecha de un cumplimiento no puede ser futura.
+- En los recordatorios, `dia_semana` va de 1 (lunes) a 7 (domingo).
+- La racha no se guarda en ninguna tabla, el backend la calcula con los registros de cumplimiento.
+
+### Índices
+
+Para cumplir RNF-01 (que los hábitos del día carguen en menos de 2 segundos) agregamos índices en las columnas que más se usan para filtrar:
+
+- `tarea (id_usuario)`
+- `habito (id_usuario)`
+- `registro_cumplimiento (id_habito, fecha DESC)`
+- `plantilla_habito (id_categoria)`
+- `recordatorio (dia_semana, hora)`, solo para los recordatorios activos
+
+### Pruebas de las restricciones
+
+Al final de `database/geshab.sql` dejamos comentadas cuatro pruebas para correr a mano en `psql`. Las tres primeras tienen que dar error:
+
+| Prueba | Qué debería pasar |
+|---|---|
+| Marcar dos veces el mismo hábito el mismo día | Error por el UNIQUE |
+| Borrar una plantilla que alguien adoptó | Error por la clave foránea (RF-07) |
+| Crear una tarea con prioridad `urgente` | Error por el CHECK |
+| Borrar un usuario | Se borran sus datos y el catálogo queda igual |
+
+## Pruebas de la API
+
+Las colecciones de Postman en formato `.json` y las capturas de las
+peticiones están en la carpeta `anexos/`.
+
+Para importarlas: en Postman, **File → Import** y seleccionar el archivo
+`.json`. Antes de ejecutarlas hay que iniciar sesión con
+`POST /api/auth/login` y copiar el token devuelto en la cabecera
+`Authorization: Bearer <token>` de las demás peticiones.
