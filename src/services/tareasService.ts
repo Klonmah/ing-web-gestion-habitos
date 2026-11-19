@@ -4,6 +4,7 @@
 // cambiaron, asi que las paginas siguen funcionando igual.
 
 import { api } from './api';
+import { aFechaLocal, hoy } from '../utils/fechas';
 
 export type Prioridad = 'alta' | 'media' | 'baja';
 
@@ -28,16 +29,6 @@ interface TareaApi {
   prioridad: Prioridad;
   completada: boolean;
 }
-
-// La columna fecha_limite es un DATE, pero el driver de PostgreSQL lo
-// entrega como fecha con hora ("2026-10-22T03:00:00.000Z"). Si ya viene
-// como AAAA-MM-DD se deja igual; si no, se toma el dia en hora local.
-const aFechaLocal = (valor: string): string => {
-  if (/^\d{4}-\d{2}-\d{2}$/.test(valor)) return valor;
-  const d = new Date(valor);
-  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-  return d.toISOString().slice(0, 10);
-};
 
 const aTarea = (t: TareaApi): Tarea => ({
   id: String(t.id_tarea),
@@ -105,13 +96,6 @@ export const actualizarTarea = async (
 export const eliminarTarea = async (id: string): Promise<void> => {
   await api(`/tareas/${encodeURIComponent(id)}`, { metodo: 'DELETE' });
   ultimaVersion.delete(id);
-};
-
-// Fecha de hoy en hora local, en formato AAAA-MM-DD.
-const hoy = (): string => {
-  const d = new Date();
-  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-  return d.toISOString().slice(0, 10);
 };
 
 // Una tarea esta vencida si no esta completada y su fecha limite ya paso.
