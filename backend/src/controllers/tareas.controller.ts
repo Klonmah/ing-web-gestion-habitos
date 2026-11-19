@@ -1,107 +1,47 @@
-import { Request, Response } from 'express';
-import { z } from 'zod';
-import { ErrorHttp } from '../utils/ErrorHttp';
-import { pool } from '../config/db'; // Importamos el pool del Rol B
+import type { Request, Response, NextFunction } from 'express';
+import * as tareasService from '../services/tareas.service';
+import { idUsuarioActual } from '../utils/usuarioActual';
 
-// Esquema de Validación
-const tareaSchema = z.object({
-  titulo: z.string().min(1, 'El título no puede estar vacío').max(80),
-  descripcion: z.string().optional(),
-  fecha_limite: z.string(), // YYYY-MM-DD
-  prioridad: z.enum(['alta', 'media', 'baja']),
-  completada: z.boolean().optional(),
-});
+/**
+ * Controlador de tareas (RF-01). Solo lee el request y arma la
+ * respuesta: el body ya llega validado por validar(), el :id por
+ * validarId, y el SQL vive en tareas.service. Cualquier error se pasa
+ * a next() y lo responde error.middleware con el formato unico.
+ */
 
-// GET /tareas
-export const getTareas = async (req: Request, res: Response): Promise<any> => {
+// GET /api/tareas
+export const getTareas = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const id_usuario = req.usuario?.id_usuario;
-    const result = await pool.query(
-      'SELECT * FROM tarea WHERE id_usuario = $1 ORDER BY fecha_limite ASC',
-      [id_usuario]
-    );
-    res.json(result.rows);
+    res.json(await tareasService.listarTareas(idUsuarioActual(req)));
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Error al obtener las tareas' });
+    next(error);
   }
 };
 
-// POST /tareas
-export const createTarea = async (req: Request, res: Response): Promise<any> => {
+// POST /api/tareas
+export const createTarea = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const id_usuario = req.usuario?.id_usuario;
-    const validData = tareaSchema.parse(req.body);
-    const result = await pool.query(
-      `INSERT INTO tarea (id_usuario, titulo, descripcion, fecha_limite, prioridad, completada) 
-       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      [
-        id_usuario,
-        validData.titulo,
-        validData.descripcion,
-        validData.fecha_limite,
-        validData.prioridad,
-        validData.completada || false,
-      ]
-    );
-    res.status(201).json(result.rows[0]);
+    res.status(201).json(await tareasService.crearTarea(idUsuarioActual(req), req.body));
   } catch (error) {
-    if (error instanceof z.ZodError) return res.status(400).json({ errores: error.issues });
-    console.error(error);
-    res.status(500).json({ error: 'Error al crear la tarea' });
+    next(error);
   }
 };
 
-// PUT /tareas/:id
-export const updateTarea = async (req: Request, res: Response): Promise<any> => {
+// PUT /api/tareas/:id (parcial: solo cambian los campos enviados)
+export const updateTarea = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const id_usuario = req.usuario?.id_usuario;
-    const { id } = req.params;
-    const validData = tareaSchema.parse(req.body);
-
-    const result = await pool.query(
-      `UPDATE tarea 
-       SET titulo = $1, descripcion = $2, fecha_limite = $3, prioridad = $4, completada = $5 
-       WHERE id_tarea = $6 AND id_usuario = $7 RETURNING *`,
-      [
-        validData.titulo,
-        validData.descripcion,
-        validData.fecha_limite,
-        validData.prioridad,
-        validData.completada,
-        id,
-        id_usuario,
-      ]
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Tarea no encontrada o no pertenece al usuario' });
-    }
-    res.json(result.rows[0]);
+    res.json(await tareasService.actualizarTarea(idUsuarioActual(req), Number(req.params.id), req.body));
   } catch (error) {
-    if (error instanceof z.ZodError) return res.status(400).json({ errores: error.issues });
-    console.error(error);
-    res.status(500).json({ error: 'Error al actualizar la tarea' });
+    next(error);
   }
 };
 
-// DELETE /tareas/:id
-export const deleteTarea = async (req: Request, res: Response): Promise<any> => {
+// DELETE /api/tareas/:id
+export const deleteTarea = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const id_usuario = req.usuario?.id_usuario;
-    const { id } = req.params;
-
-    const result = await pool.query(
-      'DELETE FROM tarea WHERE id_tarea = $1 AND id_usuario = $2 RETURNING *',
-      [id, id_usuario]
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Tarea no encontrada o no pertenece al usuario' });
-    }
+    await tareasService.eliminarTarea(idUsuarioActual(req), Number(req.params.id));
     res.json({ mensaje: 'Tarea eliminada exitosamente' });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Error al eliminar la tarea' });
+    next(error);
   }
 };
