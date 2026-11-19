@@ -1,0 +1,14 @@
+# Variables que usa docker-compose.yml.
+# Copiar a .env en la raiz del repositorio y completar JWT_SECRET.
+#
+#   cp docker-env.example .env
+
+DB_USER=postgres
+DB_PASSWORD=postgres
+
+# Generar con:
+#   node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
+JWT_SECRET=
+JWT_EXPIRES_IN=24h
+
+CORS_ORIGIN=http://localhost:5173,http://localhost:8100

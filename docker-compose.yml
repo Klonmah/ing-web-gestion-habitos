@@ -1,0 +1,62 @@
+# Levanta la aplicacion completa con un solo comando:
+#
+#   docker compose up --build
+#
+# Arranca dos contenedores:
+#   db      PostgreSQL 18, que al crearse ejecuta backend/database/geshab.sql
+#   backend la API REST, que espera a que la base responda antes de iniciar
+#
+# Para detener y borrar tambien los datos:  docker compose down -v
+
+services:
+  db:
+    image: postgres:18-alpine
+    container_name: geshab-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      # Se deja la base por defecto "postgres" a proposito: el script
+      # geshab.sql hace DROP/CREATE DATABASE geshab y luego \c geshab,
+      # y para eso no puede estar conectado a geshab.
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      # Todo lo que este en esta carpeta se ejecuta la primera vez que
+      # el contenedor crea su volumen de datos.
+      - ./backend/database/geshab.sql:/docker-entrypoint-initdb.d/01-geshab.sql:ro
+      - datos_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d geshab"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+    container_name: geshab-backend
+    restart: unless-stopped
+    environment:
+      PORT: 3000
+      # "db" es el nombre del servicio de arriba: dentro de la red de
+      # Docker funciona como nombre de host.
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: geshab
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgres}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-24h}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173,http://localhost:8100}
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        # No basta con que el contenedor exista: hay que esperar a que
+        # PostgreSQL acepte conexiones, o el backend muere al arrancar.
+        condition: service_healthy
+
+volumes:
+  datos_postgres:
