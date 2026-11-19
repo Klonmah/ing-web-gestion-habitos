@@ -73,6 +73,24 @@ export const listarHabitosDeHoy = async (): Promise<HabitoHoy[]> => {
     });
 };
 
+/** Datos minimos de una plantilla del catalogo para adoptarla. */
+export interface PlantillaAdoptable {
+  id_plantilla: number;
+  nombre: string;
+  frecuencia_sugerida: Frecuencia;
+}
+
+/**
+ * Adopta una plantilla del catalogo (RF-06): crea un habito propio con
+ * el nombre y la frecuencia sugerida de la plantilla.
+ */
+export const adoptarPlantilla = async (p: PlantillaAdoptable): Promise<void> => {
+  await api('/habitos', {
+    metodo: 'POST',
+    cuerpo: { id_plantilla: p.id_plantilla, nombre: p.nombre, frecuencia: p.frecuencia_sugerida },
+  });
+};
+
 /** Check-in de un toque (RNF-03): registra el cumplimiento de hoy. */
 export const marcarCumplidoHoy = async (id: number): Promise<void> => {
   await api(`/habitos/${id}/cumplimientos`, {

@@ -5,6 +5,7 @@ import MisTareas from '../pages/MisTareas';
 import Admin from '../pages/Admin';
 import Login from '../pages/Login';
 import Registro from '../pages/Registro';
+import Catalogo from '../pages/Catalogo';
 import PaginaPlaceholder from '../pages/PaginaPlaceholder';
 import { IonRouterOutlet } from '@ionic/react';
 import ProtectedRoute from './ProtectedRoute';
@@ -23,7 +24,7 @@ function AppRoutes() {
             <Route path="/tareas" element={<ProtectedRoute><MisTareas /></ProtectedRoute>} />
 
             <Route path="/inicio" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-            <Route path="/catalogo" element={<ProtectedRoute><PaginaPlaceholder /></ProtectedRoute>} />
+            <Route path="/catalogo" element={<ProtectedRoute><Catalogo /></ProtectedRoute>} />
 
             <Route path="/habitos/nuevo" element={<ProtectedRoute><PaginaPlaceholder /></ProtectedRoute>} />
 
