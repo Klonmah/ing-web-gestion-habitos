@@ -43,6 +43,8 @@ La aplicación será completamente gratuita en donde todos los usuarios registra
     - [Justificación Técnica](#justificación-técnica)
 5. [Bocetos UI/UX](#bocetos-uiux)
 6. [Tecnologías y Librerías](#tecnologías)
+7. [Integración con el backend](#integración-con-el-backend)
+8. [Instalación y ejecución](#instalación-y-ejecución)
 
 ---
 
@@ -432,39 +434,116 @@ Un nuevo rol se incorpora como un grupo de rutas con su propio criterio de acces
 [Enlace a nuestro Figma](https://www.figma.com/design/XpXTuIRPz4Y28WcnSCFjFk/Ingenieria-Web)
 
 ## Tecnologías
-- **Frontend:** Ionic Framework con React, TypeScript.
-- **Estilos:** TailwindCSS / CSS.
-- **Librerías principales:** 
+- **Frontend:** Ionic Framework 9 con React 19 y TypeScript, empaquetado con Vite.
+- **Navegación:** React Router 6 dentro de `IonRouterOutlet`.
+- **Estilos:** CSS y variables de tema de Ionic (solo modo claro, como el diseño de Figma).
+- **Backend:** API REST en Node.js + Express + PostgreSQL, en la rama [`backend`](https://github.com/Klonmah/ing-web-gestion-habitos/tree/backend).
+
+## Integración con el backend
+
+El frontend y el backend son dos programas independientes que se comunican por HTTP.
+El frontend no tiene datos propios: **todo lo que muestra viene de la API** en
+`http://localhost:3000/api` (configurable con `VITE_API_URL`).
+
+**La autenticación es real**, contra la API:
+
+- El login llama a `POST /api/auth/login` y el registro a `POST /api/auth/registro`.
+  El backend valida las credenciales (contraseñas con bcrypt) y devuelve un **JWT**
+  con el rol del usuario.
+- El token se guarda en `localStorage` y `src/services/api.ts` lo adjunta en la
+  cabecera `Authorization: Bearer ...` de cada petición.
+- Si el backend responde `401` (token vencido o inválido), `api.ts` cierra la sesión
+  y lleva al login con el aviso "Tu sesión expiró".
+- Las rutas de administrador se ocultan en el frontend según el rol, pero la
+  protección real la hace el backend: `/api/admin/*` responde `403` a un usuario común.
+- Las reglas de contraseña (8 caracteres, una mayúscula y un número) las valida el
+  backend al registrarse, y sus errores se muestran bajo cada campo.
+
+| Pantalla | Ruta | Endpoints que usa |
+|---|---|---|
+| Login | `/login` | `POST /api/auth/login` |
+| Registro | `/registro` | `POST /api/auth/registro` |
+| Inicio | `/inicio` | `GET /api/habitos`, `GET /api/progreso`, `POST /api/habitos/:id/cumplimientos`, `DELETE /api/registros/:id` |
+| Mis tareas | `/tareas` | `GET/POST/PUT/DELETE /api/tareas` |
+| Catálogo | `/catalogo` | `GET /api/catalogo?categoria=&dificultad=`, `POST /api/habitos` |
+| Progreso | `/progreso` | `GET /api/progreso?periodo=semanal\|mensual`, `GET /api/habitos`, `GET /api/catalogo` |
+| Plantillas (admin) | `/admin/plantillas` | `GET/POST/PUT/DELETE /api/admin/plantillas`, `GET /api/admin/categorias` |
+| Categorías y métricas (admin) | `/admin/categorias-metricas` | `GET/POST/PUT/DELETE /api/admin/categorias`, `GET /api/admin/metricas` |
+
+Todas las pantallas muestran un indicador de carga, el mensaje de error del backend
+con un botón **Reintentar** si la petición falla, y un estado vacío cuando no hay datos.
 
 ## Instalación y ejecución
+
+Para usar la app hay que levantar **los dos proyectos**: primero el backend
+(puerto 3000) y luego el frontend (puerto 5173).
 
 **Requisitos previos:**
 - [Node.js](https://nodejs.org) versión LTS (incluye npm).
 - [Git](https://git-scm.com).
+- [PostgreSQL](https://www.postgresql.org/download/) 14 o superior, **o bien** [Docker](https://www.docker.com/) para levantar el backend sin instalar PostgreSQL.
 
-**Instalación:**
+Se recomienda clonar cada rama en su propia carpeta:
 
 ```bash
-git clone https://github.com/Klonmah/ing-web-gestion-habitos.git
-cd ing-web-gestion-habitos
-git checkout frontend
-npm install
+git clone -b backend  https://github.com/Klonmah/ing-web-gestion-habitos.git geshab-backend
+git clone -b frontend https://github.com/Klonmah/ing-web-gestion-habitos.git geshab-frontend
 ```
 
 > **Nota para Windows:** si PowerShell muestra un error de *ejecución de scripts deshabilitada* al usar npm, ejecutar una vez:
 > `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`
 
-**Ejecución:**
+### 1. Backend (terminal 1)
+
+**Con Docker** (levanta PostgreSQL y la API juntos):
 
 ```bash
+cd geshab-backend
+cp docker-env.example .env      # completar JWT_SECRET
+docker compose up --build
+```
+
+**Sin Docker** (con PostgreSQL instalado):
+
+```bash
+cd geshab-backend/backend
+npm install
+cp .env.example .env            # completar DB_PASSWORD y JWT_SECRET
+psql -U postgres -f database/geshab.sql
 npm run dev
 ```
 
-Luego abrir en el navegador la dirección que muestra la terminal (por defecto `http://localhost:5173`).
+Para comprobar que funciona, abrir `http://localhost:3000/salud`: debe responder
+`{"estado":"ok","baseDeDatos":"conectada", ...}`. Los detalles están en el README
+de la rama `backend`.
 
-**Acceso de prueba:** en esta entrega la autenticación es simulada en el frontend, ya que el backend se implementa en la Entrega Parcial 2. La contraseña debe tener mínimo 8 caracteres, una mayúscula y un número.
+### 2. Frontend (terminal 2)
 
-| Rol | Correo de ejemplo | Contraseña de ejemplo |
+```bash
+cd geshab-frontend
+npm install
+cp .env.example .env            # opcional: solo si la API no está en localhost:3000
+npm run dev
+```
+
+Luego abrir `http://localhost:5173`.
+
+> El backend solo acepta peticiones de los orígenes de `CORS_ORIGIN` en su `.env`
+> (por defecto `http://localhost:5173` y `http://localhost:8100`). Si el frontend
+> corre en otro puerto, hay que agregarlo ahí.
+
+### Usuarios de prueba
+
+Los crea el script `database/geshab.sql` del backend. **Solo para desarrollo.**
+
+| Rol | Correo | Contraseña |
 |---|---|---|
-| Usuario | `usuario@correo.cl` | `Habitos2026` |
-| Administrador | `admin@admingeshab.cl` | `Habitos2026` |
+| Administrador | `admin@geshab.cl` | `Admin1234` |
+| Usuario | `ana@geshab.cl` | `Usuario123` |
+| Usuario | `benja@geshab.cl` | `Usuario123` |
+| Usuario | `carla@geshab.cl` | `Usuario123` |
+
+También se puede crear una cuenta nueva desde **Regístrate aquí** en el login.
+
+> El backend limita a 15 los intentos **fallidos** de login o registro por IP cada
+> 15 minutos; los intentos correctos no cuentan.
