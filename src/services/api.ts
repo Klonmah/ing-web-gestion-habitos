@@ -25,14 +25,26 @@ export interface UsuarioSesion {
   rol: 'usuario' | 'admin';
 }
 
-/** Error de la API: conserva el codigo HTTP por si la pagina lo necesita. */
+/** Error de un campo, tal como lo arma el middleware validar del backend. */
+export interface DetalleError {
+  campo: string;
+  mensaje: string;
+}
+
+/**
+ * Error de la API: conserva el codigo HTTP y, si el backend los mando,
+ * los errores por campo, para que los formularios marquen el input
+ * exacto que fallo.
+ */
 export class ApiError extends Error {
   readonly estado: number;
+  readonly detalles: DetalleError[];
 
-  constructor(estado: number, mensaje: string) {
+  constructor(estado: number, mensaje: string, detalles: DetalleError[] = []) {
     super(mensaje);
     this.name = 'ApiError';
     this.estado = estado;
+    this.detalles = detalles;
   }
 }
 
@@ -99,6 +111,19 @@ const extraerMensaje = (cuerpo: unknown, porDefecto: string): string => {
   return porDefecto;
 };
 
+// Errores por campo de { error, detalles: [{ campo, mensaje }] }.
+const extraerDetalles = (cuerpo: unknown): DetalleError[] => {
+  if (typeof cuerpo !== 'object' || cuerpo === null) return [];
+  const { detalles } = cuerpo as { detalles?: unknown };
+  if (!Array.isArray(detalles)) return [];
+  return detalles.filter(
+    (d): d is DetalleError =>
+      typeof d === 'object' && d !== null &&
+      typeof (d as DetalleError).campo === 'string' &&
+      typeof (d as DetalleError).mensaje === 'string'
+  );
+};
+
 const sesionExpirada = (): never => {
   cerrarSesion();
   // Se evita redirigir si ya estamos en /login (no hacer bucle).
@@ -140,7 +165,8 @@ export const api = async <T = unknown>(ruta: string, opciones: OpcionesApi = {})
     if (respuesta.status === 401 && !publica) return sesionExpirada();
     throw new ApiError(
       respuesta.status,
-      extraerMensaje(datos, `Error ${respuesta.status} al comunicarse con el servidor`)
+      extraerMensaje(datos, `Error ${respuesta.status} al comunicarse con el servidor`),
+      extraerDetalles(datos)
     );
   }
 
