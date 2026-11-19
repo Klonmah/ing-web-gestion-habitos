@@ -185,7 +185,8 @@ npm install
 | Consultas parametrizadas contra inyección SQL | Toda la capa de servicios |
 | Errores sin filtrar detalles internos | `src/middlewares/error.middleware.ts` |
 | Cabeceras de seguridad con helmet y `X-Powered-By` desactivado | `src/index.ts` |
-| Límite de 10 intentos por IP cada 15 min en `/api/auth` | `src/index.ts` |
+| Límite de 15 intentos fallidos por IP cada 15 min en `/api/auth` (los exitosos no cuentan) | `src/index.ts` |
+| Validación de fechas reales (`2026-02-31` se rechaza), ids, horas y JSON malformado: 400, nunca 500 | `src/schemas/`, `src/middlewares/` |
 | Secretos fuera del repositorio (`.env` en `.gitignore`) | — |
 
 El registro público siempre crea cuentas con rol `usuario`: el campo `rol` no
@@ -218,7 +219,9 @@ Todas las rutas empiezan con `/api`. Las que dicen Usuario o Admin necesitan el 
 | POST | `/api/habitos/:id/cumplimientos` | Usuario | Marcar un hábito como cumplido (RF-03) |
 | GET, POST | `/api/registros` | Usuario | Listar y crear registros de cumplimiento |
 | PUT, DELETE | `/api/registros/:id` | Usuario | Editar y borrar un registro |
-| GET | `/api/progreso?periodo=semanal` | Usuario | Porcentaje de cumplimiento y rachas (RF-04). También acepta `mensual` |
+| GET | `/api/progreso?periodo=semanal` | Usuario | Porcentaje de cumplimiento y rachas, por hábito, por categoría y general (RF-04). También acepta `mensual` |
+| GET, POST | `/api/recordatorios` | Usuario | Listar (filtro opcional `?id_habito=`) y crear recordatorios (RF-05) |
+| PUT, DELETE | `/api/recordatorios/:id` | Usuario | Editar y borrar un recordatorio |
 | GET | `/api/catalogo?categoria=&dificultad=` | Usuario | Plantillas activas con filtros (RF-06) |
 | GET, POST | `/api/admin/plantillas` | Admin | Listar y crear plantillas (RF-07) |
 | PUT, DELETE | `/api/admin/plantillas/:id` | Admin | Editar y borrar plantillas (no se puede borrar si alguien la adoptó) |
@@ -227,6 +230,36 @@ Todas las rutas empiezan con `/api`. Las que dicen Usuario o Admin necesitan el 
 | GET | `/api/admin/metricas` | Admin | Métricas generales sin datos personales (RF-08) |
 
 Si no se manda el token la respuesta es 401, y si un usuario normal intenta entrar a `/api/admin` la respuesta es 403.
+
+### Formato de errores
+
+Todos los errores de la API responden con el mismo formato. Cuando el problema es un dato enviado, `detalles` indica qué campo falló:
+
+```json
+{
+  "error": "Los datos enviados no son validos",
+  "detalles": [{ "campo": "fecha_limite", "mensaje": "La fecha no existe en el calendario" }]
+}
+```
+
+| Código | Cuándo |
+|---|---|
+| 400 | Dato inválido: fecha con formato malo o inexistente (`hola`, `2026-02-31`), id no numérico (`/tareas/abc`), JSON malformado, plantilla inexistente, fecha de cumplimiento futura |
+| 401 / 403 | Sin token, token vencido o sin rol admin |
+| 404 | El recurso no existe o no pertenece al usuario |
+| 409 | Conflicto: adoptar dos veces la misma plantilla, adoptar una plantilla desactivada, marcar dos veces el mismo día, recordatorio repetido |
+| 429 | Demasiados intentos fallidos de login o registro |
+
+### Notas sobre los endpoints
+
+- **PUT parcial.** En tareas, hábitos, registros y recordatorios el `PUT` actualiza solo los campos que se envían (por ejemplo `{ "titulo": "..." }` sin `completada`). Un body vacío responde 400.
+- **Adopción (RF-06).** `POST /api/habitos` con `id_plantilla` adopta una plantilla del catálogo. Debe existir y estar activa, y cada usuario puede adoptarla una sola vez.
+- **Recordatorios (RF-05).** Body: `{ "id_habito": 1, "dia_semana": 1, "hora": "08:00", "activo": true }`, con `dia_semana` de 1 (lunes) a 7 (domingo). El hábito debe ser del usuario.
+- **Progreso (RF-04).** El servidor calcula los porcentajes. Por cada hábito activo devuelve `racha_actual`, `cumplimientos_periodo`, `cumplidos`, `esperados`, `porcentaje` y `categoria`. Además entrega `categorias[]` y `porcentaje_general`. La regla es la siguiente:
+  - Un hábito diario espera un cumplimiento por día y uno semanal, uno por semana.
+  - Solo cuentan los días desde que se adoptó el hábito.
+  - El porcentaje tiene tope de 100.
+  - Los hábitos sin plantilla quedan en la categoría "Personalizados".
 
 Para levantar también el frontend, en otra terminal y en la rama `frontend`:
 

@@ -111,7 +111,9 @@ Todas las rutas empiezan con `/api`. Las que dicen Usuario o Admin necesitan el 
 | POST | `/api/habitos/:id/cumplimientos` | Usuario | Marcar un hábito como cumplido (RF-03) |
 | GET, POST | `/api/registros` | Usuario | Listar y crear registros de cumplimiento |
 | PUT, DELETE | `/api/registros/:id` | Usuario | Editar y borrar un registro |
-| GET | `/api/progreso?periodo=semanal` | Usuario | Porcentaje de cumplimiento y rachas (RF-04). También acepta `mensual` |
+| GET | `/api/progreso?periodo=semanal` | Usuario | Porcentaje de cumplimiento y rachas, por hábito, por categoría y general (RF-04). También acepta `mensual` |
+| GET, POST | `/api/recordatorios` | Usuario | Listar (filtro opcional `?id_habito=`) y crear recordatorios (RF-05) |
+| PUT, DELETE | `/api/recordatorios/:id` | Usuario | Editar y borrar un recordatorio |
 | GET | `/api/catalogo?categoria=&dificultad=` | Usuario | Plantillas activas con filtros (RF-06) |
 | GET, POST | `/api/admin/plantillas` | Admin | Listar y crear plantillas (RF-07) |
 | PUT, DELETE | `/api/admin/plantillas/:id` | Admin | Editar y borrar plantillas (no se puede borrar si alguien la adoptó) |
@@ -120,6 +122,8 @@ Todas las rutas empiezan con `/api`. Las que dicen Usuario o Admin necesitan el 
 | GET | `/api/admin/metricas` | Admin | Métricas generales sin datos personales (RF-08) |
 
 Si no se manda el token la respuesta es 401, y si un usuario normal intenta entrar a `/api/admin` la respuesta es 403.
+
+Todos los errores usan el formato `{ "error": "...", "detalles": [{ "campo": "...", "mensaje": "..." }] }`, y `detalles` aparece cuando falla un dato enviado. Los `PUT` son parciales, y `/api/progreso` entrega los porcentajes ya calculados. El detalle de códigos y reglas está en el [README principal](../README.md#formato-de-errores).
 
 Para levantar también el frontend, en otra terminal y en la rama `frontend`:
 
