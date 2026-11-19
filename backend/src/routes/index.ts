@@ -6,6 +6,7 @@ import habitosRoutes from './habitos.routes';
 import registrosRoutes from './registros.routes';
 import progresoRoutes from './progreso.routes';
 import catalogoRoutes from './catalogo.routes';
+import recordatoriosRoutes from './recordatorios.routes';
 
 /**
  * Punto unico donde se montan todas las rutas de la API.
@@ -32,5 +33,6 @@ router.use('/habitos', habitosRoutes);
 router.use('/catalogo', catalogoRoutes);
 router.use('/registros', registrosRoutes);
 router.use('/progreso', progresoRoutes);
+router.use('/recordatorios', recordatoriosRoutes);
 
 export default router;
