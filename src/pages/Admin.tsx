@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   IonPage, IonSplitPane, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle,
   IonContent, IonGrid, IonRow, IonCol, IonButton, IonIcon, IonChip, IonLabel, IonSearchbar,
-  IonModal, IonInput, IonTextarea, IonSelect, IonSelectOption, IonAlert, IonToast
+  IonModal, IonInput, IonTextarea, IonSelect, IonSelectOption, IonAlert, IonToast,
+  IonSpinner, IonText
 } from '@ionic/react';
 import { addOutline } from 'ionicons/icons';
 import LeftSideMenu from '../components/LeftSideMenu';
@@ -24,6 +25,14 @@ interface AccionPendiente {
 const estiloBotonPrimario = { '--background': '#2e6f5e', '--border-radius': '8px', textTransform: 'none' } as React.CSSProperties;
 const estiloCabecera: React.CSSProperties = { fontSize: 13, color: '#5F6B68' };
 
+interface Aviso {
+  texto: string;
+  color: 'success' | 'danger';
+}
+
+const mensajeDeError = (err: unknown, porDefecto: string): string =>
+  err instanceof Error ? err.message : porDefecto;
+
 const Admin: React.FC = () => {
   const [plantillas, setPlantillas] = useState<Plantilla[]>([]);
   const [busqueda, setBusqueda] = useState('');
@@ -33,11 +42,32 @@ const Admin: React.FC = () => {
   const [form, setForm] = useState<DatosPlantilla>(FORM_VACIO);
   const [errores, setErrores] = useState<Errores>({});
   const [pendiente, setPendiente] = useState<AccionPendiente | null>(null);
-  const [mensaje, setMensaje] = useState('');
+  const [aviso, setAviso] = useState<Aviso | null>(null);
+  const [guardando, setGuardando] = useState(false);
+  const [cargando, setCargando] = useState(true);
+  const [errorCarga, setErrorCarga] = useState('');
+
+  // Si el listado falla se muestra el error con un boton para reintentar,
+  // en vez de "No hay plantillas que coincidan con el filtro".
+  // Numero de la ultima peticion: si llegan dos respuestas (reintento,
+  // doble efecto de StrictMode), solo se aplica la mas reciente.
+  const ultimaPeticion = useRef(0);
+  const cargar = useCallback(() => {
+    const numero = ++ultimaPeticion.current;
+    const vigente = () => numero === ultimaPeticion.current;
+    setCargando(true);
+    setErrorCarga('');
+    listarPlantillas()
+      .then((lista) => { if (vigente()) setPlantillas(lista); })
+      .catch((err: unknown) => {
+        if (vigente()) setErrorCarga(err instanceof Error ? err.message : 'No se pudieron cargar las plantillas.');
+      })
+      .finally(() => { if (vigente()) setCargando(false); });
+  }, []);
 
   useEffect(() => {
-    listarPlantillas().then(setPlantillas);
-  }, []);
+    cargar();
+  }, [cargar]);
 
   const validar = (f: DatosPlantilla): Errores => {
     const e: Errores = {};
@@ -71,22 +101,34 @@ const Admin: React.FC = () => {
     if (Object.keys(nuevosErrores).length > 0) return;
 
     const datos: DatosPlantilla = { ...form, nombre: form.nombre.trim(), descripcion: form.descripcion.trim() };
-    if (editandoId) {
-      const actualizada = await actualizarPlantilla(editandoId, datos);
-      setPlantillas((prev) => prev.map((p) => (p.id === actualizada.id ? actualizada : p)));
-      setMensaje('Plantilla actualizada.');
-    } else {
-      const nueva = await crearPlantilla(datos);
-      setPlantillas((prev) => [...prev, nueva]);
-      setMensaje('Plantilla creada.');
+    setGuardando(true);
+    try {
+      if (editandoId) {
+        const actualizada = await actualizarPlantilla(editandoId, datos);
+        setPlantillas((prev) => prev.map((p) => (p.id === actualizada.id ? actualizada : p)));
+        setAviso({ texto: 'Plantilla actualizada.', color: 'success' });
+      } else {
+        const nueva = await crearPlantilla(datos);
+        setPlantillas((prev) => [...prev, nueva]);
+        setAviso({ texto: 'Plantilla creada.', color: 'success' });
+      }
+      setModalAbierto(false);
+    } catch (err) {
+      // El modal queda abierto con lo escrito, para corregir y reintentar.
+      setAviso({ texto: mensajeDeError(err, 'No se pudo guardar la plantilla.'), color: 'danger' });
+    } finally {
+      setGuardando(false);
     }
-    setModalAbierto(false);
   };
 
   const cambiarEstado = async (p: Plantilla, activa: boolean) => {
-    const actualizada = await actualizarPlantilla(p.id, { activa });
-    setPlantillas((prev) => prev.map((x) => (x.id === actualizada.id ? actualizada : x)));
-    setMensaje(activa ? 'Plantilla activada.' : 'Plantilla desactivada.');
+    try {
+      const actualizada = await actualizarPlantilla(p.id, { activa });
+      setPlantillas((prev) => prev.map((x) => (x.id === actualizada.id ? actualizada : x)));
+      setAviso({ texto: activa ? 'Plantilla activada.' : 'Plantilla desactivada.', color: 'success' });
+    } catch (err) {
+      setAviso({ texto: mensajeDeError(err, 'No se pudo cambiar el estado de la plantilla.'), color: 'danger' });
+    }
   };
 
   const ejecutarPendiente = async (accion: AccionPendiente) => {
@@ -97,9 +139,10 @@ const Admin: React.FC = () => {
     try {
       await eliminarPlantilla(accion.plantilla.id);
       setPlantillas((prev) => prev.filter((x) => x.id !== accion.plantilla.id));
-      setMensaje('Plantilla eliminada.');
+      setAviso({ texto: 'Plantilla eliminada.', color: 'success' });
     } catch (err) {
-      setMensaje(err instanceof Error ? err.message : 'No se pudo eliminar la plantilla.');
+      // P. ej. 409 si la plantilla esta en uso (RF-07).
+      setAviso({ texto: mensajeDeError(err, 'No se pudo eliminar la plantilla.'), color: 'danger' });
     }
   };
 
@@ -169,7 +212,16 @@ const Admin: React.FC = () => {
                   <IonCol sizeMd="3" style={estiloCabecera}>Acciones</IonCol>
                 </IonRow>
 
-                {visibles.length === 0 && (
+                {cargando ? (
+                  <div style={{ padding: 16, textAlign: 'center' }}>
+                    <IonSpinner name="crescent" />
+                  </div>
+                ) : errorCarga ? (
+                  <div style={{ padding: 16, textAlign: 'center' }}>
+                    <IonText color="danger"><p>{errorCarga}</p></IonText>
+                    <IonButton fill="outline" onClick={cargar}>Reintentar</IonButton>
+                  </div>
+                ) : visibles.length === 0 && (
                   <p style={{ padding: 16, color: '#5F6B68' }}>No hay plantillas que coincidan con el filtro.</p>
                 )}
 
@@ -316,8 +368,8 @@ const Admin: React.FC = () => {
 
                 <p style={{ fontSize: 13, color: '#5F6B68' }}>Los campos con * son obligatorios.</p>
 
-                <IonButton expand="block" style={estiloBotonPrimario} onClick={guardar}>
-                  {editandoId ? 'Guardar cambios' : 'Crear plantilla'}
+                <IonButton expand="block" style={estiloBotonPrimario} onClick={guardar} disabled={guardando}>
+                  {guardando ? 'Guardando...' : editandoId ? 'Guardar cambios' : 'Crear plantilla'}
                 </IonButton>
               </IonContent>
             </IonModal>
@@ -345,11 +397,12 @@ const Admin: React.FC = () => {
             />
 
             <IonToast
-              isOpen={mensaje !== ''}
-              message={mensaje}
-              duration={2500}
+              isOpen={aviso !== null}
+              message={aviso?.texto}
+              duration={aviso?.color === 'danger' ? 3500 : 2500}
+              color={aviso?.color}
               position="bottom"
-              onDidDismiss={() => setMensaje('')}
+              onDidDismiss={() => setAviso(null)}
             />
           </IonContent>
         </div>

@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   IonPage, IonSplitPane, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle,
   IonContent, IonGrid, IonRow, IonCol, IonCard, IonCardContent, IonCheckbox, IonButton,
-  IonIcon, IonModal, IonInput, IonTextarea, IonSelect, IonSelectOption, IonAlert, IonToast
+  IonIcon, IonModal, IonInput, IonTextarea, IonSelect, IonSelectOption, IonAlert, IonToast,
+  IonSpinner, IonText
 } from '@ionic/react';
 import { addOutline, createOutline, trashOutline } from 'ionicons/icons';
 import LeftSideMenu from '../components/LeftSideMenu';
@@ -33,6 +34,14 @@ const validar = (f: DatosTarea): Errores => {
 const formatearFecha = (iso: string): string =>
   new Date(iso + 'T00:00:00').toLocaleDateString('es-CL', { day: 'numeric', month: 'short' });
 
+interface Aviso {
+  texto: string;
+  color: 'success' | 'danger';
+}
+
+const mensajeDeError = (err: unknown, porDefecto: string): string =>
+  err instanceof Error ? err.message : porDefecto;
+
 const MisTareas: React.FC = () => {
   const [tareas, setTareas] = useState<Tarea[]>([]);
   const [modalAbierto, setModalAbierto] = useState(false);
@@ -40,11 +49,35 @@ const MisTareas: React.FC = () => {
   const [form, setForm] = useState<DatosTarea>(FORM_VACIO);
   const [errores, setErrores] = useState<Errores>({});
   const [porEliminar, setPorEliminar] = useState<Tarea | null>(null);
-  const [mensaje, setMensaje] = useState('');
+  const [aviso, setAviso] = useState<Aviso | null>(null);
+  const [guardando, setGuardando] = useState(false);
+  // Al fallar el check de completada se incrementa para volver a montar
+  // la casilla: si no, Ionic la deja marcada aunque el cambio no se guardo.
+  const [revision, setRevision] = useState(0);
+  const [cargando, setCargando] = useState(true);
+  const [errorCarga, setErrorCarga] = useState('');
+
+  // Si el listado falla (backend caido, 500...) se muestra el error con
+  // un boton para reintentar, en vez de "Aun no tienes tareas".
+  // Numero de la ultima peticion: si llegan dos respuestas (reintento,
+  // doble efecto de StrictMode), solo se aplica la mas reciente.
+  const ultimaPeticion = useRef(0);
+  const cargar = useCallback(() => {
+    const numero = ++ultimaPeticion.current;
+    const vigente = () => numero === ultimaPeticion.current;
+    setCargando(true);
+    setErrorCarga('');
+    listarTareas()
+      .then((lista) => { if (vigente()) setTareas(lista); })
+      .catch((err: unknown) => {
+        if (vigente()) setErrorCarga(err instanceof Error ? err.message : 'No se pudieron cargar tus tareas.');
+      })
+      .finally(() => { if (vigente()) setCargando(false); });
+  }, []);
 
   useEffect(() => {
-    listarTareas().then(setTareas);
-  }, []);
+    cargar();
+  }, [cargar]);
 
   const abrirNueva = () => {
     setEditandoId(null);
@@ -67,27 +100,44 @@ const MisTareas: React.FC = () => {
     if (Object.keys(nuevosErrores).length > 0) return;
 
     const datos: DatosTarea = { ...form, titulo: form.titulo.trim(), descripcion: form.descripcion.trim() };
-    if (editandoId) {
-      const actualizada = await actualizarTarea(editandoId, datos);
-      setTareas((prev) => prev.map((t) => (t.id === actualizada.id ? actualizada : t)));
-      setMensaje('Tarea actualizada.');
-    } else {
-      const nueva = await crearTarea(datos);
-      setTareas((prev) => [...prev, nueva]);
-      setMensaje('Tarea creada.');
+    setGuardando(true);
+    try {
+      if (editandoId) {
+        const actualizada = await actualizarTarea(editandoId, datos);
+        setTareas((prev) => prev.map((t) => (t.id === actualizada.id ? actualizada : t)));
+        setAviso({ texto: 'Tarea actualizada.', color: 'success' });
+      } else {
+        const nueva = await crearTarea(datos);
+        setTareas((prev) => [...prev, nueva]);
+        setAviso({ texto: 'Tarea creada.', color: 'success' });
+      }
+      setModalAbierto(false);
+    } catch (err) {
+      // El modal queda abierto con lo escrito, para corregir y reintentar.
+      setAviso({ texto: mensajeDeError(err, 'No se pudo guardar la tarea.'), color: 'danger' });
+    } finally {
+      setGuardando(false);
     }
-    setModalAbierto(false);
   };
 
   const alternarCompletada = async (t: Tarea, completada: boolean) => {
-    const actualizada = await actualizarTarea(t.id, { completada });
-    setTareas((prev) => prev.map((x) => (x.id === actualizada.id ? actualizada : x)));
+    try {
+      const actualizada = await actualizarTarea(t.id, { completada });
+      setTareas((prev) => prev.map((x) => (x.id === actualizada.id ? actualizada : x)));
+    } catch (err) {
+      setRevision((r) => r + 1); // la casilla vuelve a su estado real
+      setAviso({ texto: mensajeDeError(err, 'No se pudo actualizar la tarea.'), color: 'danger' });
+    }
   };
 
   const confirmarEliminar = async (t: Tarea) => {
-    await eliminarTarea(t.id);
-    setTareas((prev) => prev.filter((x) => x.id !== t.id));
-    setMensaje('Tarea eliminada.');
+    try {
+      await eliminarTarea(t.id);
+      setTareas((prev) => prev.filter((x) => x.id !== t.id));
+      setAviso({ texto: 'Tarea eliminada.', color: 'success' });
+    } catch (err) {
+      setAviso({ texto: mensajeDeError(err, 'No se pudo eliminar la tarea.'), color: 'danger' });
+    }
   };
 
   // Pendientes primero, y dentro de cada grupo por fecha límite.
@@ -123,7 +173,16 @@ const MisTareas: React.FC = () => {
               </IonButton>
             </div>
 
-            {ordenadas.length === 0 ? (
+            {cargando ? (
+              <div style={{ textAlign: 'center', marginTop: '3rem' }}>
+                <IonSpinner name="crescent" />
+              </div>
+            ) : errorCarga ? (
+              <div style={{ textAlign: 'center', marginTop: '3rem' }}>
+                <IonText color="danger"><p>{errorCarga}</p></IonText>
+                <IonButton fill="outline" onClick={cargar}>Reintentar</IonButton>
+              </div>
+            ) : ordenadas.length === 0 ? (
               <p style={{ color: '#5F6B68', textAlign: 'center', marginTop: '3rem' }}>
                 Aún no tienes tareas. Crea la primera con “Agregar tarea”.
               </p>
@@ -140,6 +199,7 @@ const MisTareas: React.FC = () => {
                         >
                           <IonCardContent style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                             <IonCheckbox
+                              key={`${t.id}-${revision}`}
                               checked={t.completada}
                               onIonChange={(e) => alternarCompletada(t, e.detail.checked)}
                               aria-label={`Marcar "${t.titulo}" como completada`}
@@ -255,8 +315,9 @@ const MisTareas: React.FC = () => {
                   expand="block"
                   style={{ '--background': '#2e6f5e', '--border-radius': '8px', textTransform: 'none' } as React.CSSProperties}
                   onClick={guardar}
+                  disabled={guardando}
                 >
-                  {editandoId ? 'Guardar cambios' : 'Crear tarea'}
+                  {guardando ? 'Guardando...' : editandoId ? 'Guardar cambios' : 'Crear tarea'}
                 </IonButton>
               </IonContent>
             </IonModal>
@@ -280,12 +341,12 @@ const MisTareas: React.FC = () => {
             />
 
             <IonToast
-              isOpen={mensaje !== ''}
-              message={mensaje}
-              duration={2000}
-              color="success"
+              isOpen={aviso !== null}
+              message={aviso?.texto}
+              duration={aviso?.color === 'danger' ? 3500 : 2000}
+              color={aviso?.color}
               position="bottom"
-              onDidDismiss={() => setMensaje('')}
+              onDidDismiss={() => setAviso(null)}
             />
           </IonContent>
         </div>
