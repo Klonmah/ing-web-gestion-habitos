@@ -1,4 +1,4 @@
-import { IonPage, IonContent, IonButton, IonHeader, IonToolbar, IonTitle, IonItem, IonLabel, IonInput, IonText, IonIcon } from '@ionic/react';
+import { IonPage, IonContent, IonButton, IonHeader, IonInput, IonText, IonIcon } from '@ionic/react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
 import { logInOutline } from 'ionicons/icons';
@@ -15,23 +15,17 @@ const Login: React.FC = () => {
   const [params] = useSearchParams();
   const sesionExpirada = params.get('sesion') === 'expirada';
 
-  const validarPassword = (pass: string) => {
-    // RNF-02: mínimo 8 caracteres, al menos una mayúscula y un dígito
-    const regex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/;
-    return regex.test(pass);
-  };
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    if (!email || !password) {
+    // Mismas reglas que esquemaLogin del backend: solo se exige que
+    // vengan ambos campos. El formato de la contrasena (RNF-02) se
+    // valida al REGISTRARSE, no al entrar: validarlo aqui rechazaba
+    // contrasenas validas con simbolos (p. ej. "Clave#2026") y le
+    // diria a un atacante que contrasenas no pueden existir.
+    if (!email.trim() || !password) {
       setError('Por favor, completa todos los campos.');
-      return;
-    }
-
-    if (!validarPassword(password)) {
-      setError('La contraseña debe tener mínimo 8 caracteres, una mayúscula y un número.');
       return;
     }
 
@@ -39,9 +33,13 @@ const Login: React.FC = () => {
     try {
       const { usuario, token } = await api<{ usuario: Omit<UsuarioSesion, 'email'>; token: string }>(
         '/auth/login',
-        { metodo: 'POST', cuerpo: { correo: email, contrasena: password }, publica: true }
+        { metodo: 'POST', cuerpo: { correo: email.trim(), contrasena: password }, publica: true }
       );
       const sesion = guardarSesion(token, usuario);
+      // Ionic mantiene montada esta pagina: sin esto, al cerrar sesion
+      // el formulario volvia a mostrar el correo y la contrasena.
+      setEmail('');
+      setPassword('');
       navigate(sesion.rol === 'admin' ? '/admin/plantillas' : '/inicio');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo iniciar sesión.');
@@ -74,7 +72,7 @@ const Login: React.FC = () => {
             labelPlacement="floating"
             fill="outline"
             value={email}
-            onIonChange={e => setEmail(e.detail.value!)}
+            onIonInput={e => setEmail(e.detail.value ?? '')}
             className="ion-margin-bottom"
             required
           />
@@ -85,7 +83,7 @@ const Login: React.FC = () => {
             labelPlacement="floating"
             fill="outline"
             value={password}
-            onIonChange={e => setPassword(e.detail.value!)}
+            onIonInput={e => setPassword(e.detail.value ?? '')}
             className="ion-margin-bottom"
             required
           />
