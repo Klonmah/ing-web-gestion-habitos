@@ -7,6 +7,7 @@ import Login from '../pages/Login';
 import Registro from '../pages/Registro';
 import Catalogo from '../pages/Catalogo';
 import Progreso from '../pages/Progreso';
+import CategoriasMetricas from '../pages/CategoriasMetricas';
 import PaginaPlaceholder from '../pages/PaginaPlaceholder';
 import { IonRouterOutlet } from '@ionic/react';
 import ProtectedRoute from './ProtectedRoute';
@@ -37,7 +38,7 @@ function AppRoutes() {
 
             {/* Rutas de admin */}
             <Route path="/admin/plantillas" element={<ProtectedRoute requireAdmin={true}><Admin /></ProtectedRoute>} />
-            <Route path="/admin/categorias-metricas" element={<ProtectedRoute requireAdmin={true}><PaginaPlaceholder /></ProtectedRoute>} />
+            <Route path="/admin/categorias-metricas" element={<ProtectedRoute requireAdmin={true}><CategoriasMetricas /></ProtectedRoute>} />
 
             {/* Ruta por defecto */}
             <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
