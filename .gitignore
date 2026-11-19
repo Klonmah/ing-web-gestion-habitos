@@ -29,3 +29,9 @@ yarn-error.log*
 
 # Optional eslint cache
 .eslintcache
+
+# Variables de entorno (nunca se suben)
+.env
+.env.*
+!.env.example
+!.env.docker.example
