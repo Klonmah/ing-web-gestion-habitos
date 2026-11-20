@@ -1,7 +1,6 @@
 // Servicios extra del Rol D: categorias y metricas del administrador (RF-08)
-// y catalogo para el usuario (RF-06). Las paginas de estas pantallas aun
-// son PaginaPlaceholder; estas funciones quedan listas para cuando se
-// construyan.
+// y catalogo para el usuario (RF-06). Las usan CategoriasMetricas.tsx y
+// Catalogo.tsx.
 
 import { api } from './api';
 

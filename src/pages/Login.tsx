@@ -41,7 +41,7 @@ const Login: React.FC = () => {
       // el formulario volvia a mostrar el correo y la contrasena.
       setEmail('');
       setPassword('');
-      navigate(RUTA_INICIO[sesion.rol]);
+      navigate(RUTA_INICIO[sesion.rol], { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo iniciar sesión.');
     } finally {
