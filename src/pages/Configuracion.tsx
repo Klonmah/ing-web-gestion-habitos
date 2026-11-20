@@ -52,7 +52,7 @@ const Configuracion: React.FC = () => {
   };
 
   return (
-    <PaginaConMenu titulo="Configuración" contentId="contenido-configuracion">
+    <PaginaConMenu titulo="Configuración" contentId="contenido-configuracion" volverA="/perfil" volverTexto="Volver">
       <h1 style={{ fontWeight: 'bold', margin: '1rem 0 1.5rem' }}>Configuración</h1>
 
       <IonCard className="ion-no-margin" style={{ borderRadius: 12, maxWidth: 640, marginBottom: 24 }}>

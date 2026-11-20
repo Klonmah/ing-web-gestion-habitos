@@ -165,7 +165,7 @@ const Recordatorios: React.FC = () => {
   };
 
   return (
-    <PaginaConMenu titulo="Recordatorios" contentId="contenido-recordatorios">
+    <PaginaConMenu titulo="Recordatorios" contentId="contenido-recordatorios" volverA="/perfil" volverTexto="Volver">
       <h1 style={{ fontWeight: 'bold', margin: '1rem 0 0.5rem' }}>Recordatorios</h1>
       <p style={{ color: '#5F6B68', marginTop: 0 }}>
         Elige qué días y a qué hora quieres que te recordemos cada hábito.

@@ -79,7 +79,7 @@ const NuevoHabito: React.FC = () => {
   const claseCampo = (campo: Campo) => `ion-margin-bottom ${errores[campo] ? 'ion-invalid ion-touched' : ''}`;
 
   return (
-    <PaginaConMenu titulo="Hábito nuevo" contentId="contenido-nuevo-habito">
+    <PaginaConMenu titulo="Hábito nuevo" contentId="contenido-nuevo-habito" volverA="/inicio" volverTexto="Volver a Inicio">
       <div style={{ maxWidth: 520 }}>
         <h1 style={{ fontWeight: 'bold', margin: '1rem 0 0.5rem' }}>Hábito nuevo</h1>
         <p style={{ color: '#5F6B68', marginTop: 0 }}>
