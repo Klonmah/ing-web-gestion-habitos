@@ -1,5 +1,5 @@
 import { IonPage, IonContent, IonButton, IonHeader, IonInput, IonText, IonIcon } from '@ionic/react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
 import { logInOutline } from 'ionicons/icons';
 import { api } from '../services/api';
@@ -109,7 +109,7 @@ const Login: React.FC = () => {
 
         <div style={{ textAlign: 'center', marginTop: '1rem', '--ion-color-primary': '#2e6f5e' }as React.CSSProperties}>
           <IonText color="medium">
-            <p>¿No tienes cuenta? <a href="/registro">Regístrate aquí</a></p>
+            <p>¿No tienes cuenta? <Link to="/registro" style={{ color: '#2e6f5e' }}>Regístrate aquí</Link></p>
           </IonText>
         </div>
 
