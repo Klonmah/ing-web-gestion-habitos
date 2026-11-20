@@ -140,7 +140,7 @@ Los requerimientos no funcionales establecen condiciones de calidad que deberá 
 | `/tareas`   | Mis tareas | RF-01        | Lista las tareas del usuario con su fecha límite y prioridad, y permite crear, editar o eliminar cada una                  |
 | `/catalogo` | Catálogo   | RF-02, RF-06 | Muestra plantillas de hábitos filtrables por categoría y dificultad, y permite adoptarlas                                  |
 | `/progreso` | Progreso   | RF-04        | Permite ver el porcentaje de cumplimiento de hábitos de forma semanal y mensual.                                           |
-| `/perfil`   | Perfil     |              | Permite ver y cambiar el nombre de usuario, foto y sirve para entrar a las configuraciones.                                |
+| `/perfil`   | Perfil     |              | Muestra los datos de la cuenta (desde `GET /api/auth/perfil`) y un resumen de actividad: hábitos activos, cumplimiento semanal, tareas y mejor racha. Da acceso a las configuraciones. |
 
 Si no hay sesión, todas redirigen a `/login`.
 
@@ -150,11 +150,11 @@ Si no hay sesión, todas redirigen a `/login`.
 | --------------------- | ------------------- | ----------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | `/tareas/nueva`       | Nueva tarea         | `/tareas`               | RF-01        | Página para que el usuario pueda crear una nueva tarea.                                                                                       |
 | `/tareas/:id/editar`  | Editar tarea        | `/tareas`               | RF-01        | Permite al usuario cambiar la información de una tarea ya creada o eliminarla.                                                                |
-| `/habitos/nuevo`      | Nuevo hábito propio | `/catalogo` o `/inicio` | RF-02        | Permite al usuario crear un nuevo hábito desde cero o precargar uno de `/catalogo`.                                                           |
+| `/habitos/nuevo`      | Nuevo hábito propio | `/inicio`               | RF-02        | Crea un hábito propio, sin plantilla, con nombre, frecuencia, meta y horario. Los errores de validación del backend se muestran bajo cada campo. |
 | `/habitos/:id`        | Detalle del hábito  | `/inicio`               | RF-02, RF-03 | Muestra la racha actual, el historial de cumplimientos (con fecha y hora) y el acceso a editar el hábito.                                     |
 | `/habitos/:id/editar` | Editar hábito       | `/habitos/:id`          | RF-02        | Página que permite al usuario editar los datos del hábito y eliminarlo.                                                                       |
-| `/recordatorios`      | Recordatorios       | `/perfil`               | RF-05        | Permite al Usuario gestionar sus notificaciones, para ver qué hábito necesita recordatorio, cuál no y a qué hora debe llegar el recordatorio. |
-| `/configuraciones`    | Configuraciones     | `/perfil`               |              | Permite cambiar entre el modo oscuro y el claro"y cerrar sesión.                                                                              |
+| `/recordatorios`      | Recordatorios       | `/perfil`               | RF-05        | Lista los recordatorios agrupados por hábito y permite crearlos (uno o varios días de la semana y una hora), activarlos o desactivarlos y eliminarlos. Usa `/api/recordatorios`. |
+| `/configuraciones`    | Configuraciones     | `/perfil`               |              | Muestra la sesión actual (cuenta, rol y vencimiento del token) y permite cerrar sesión con confirmación. Disponible también para el administrador. |
 
 Si no hay sesión, todas redirigen a `/login`.
 
