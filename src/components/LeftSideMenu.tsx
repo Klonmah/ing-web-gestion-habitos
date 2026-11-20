@@ -18,6 +18,7 @@ const paginasUsuario = [
     { title: 'Mis tareas', url: '/tareas' },
     { title: 'Catálogo', url: '/catalogo' },
     { title: 'Progreso', url: '/progreso' },
+    { title: 'Recordatorios', url: '/recordatorios' },
     { title: 'Perfil', url: '/perfil' }
 ];
 
