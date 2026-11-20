@@ -1,7 +1,0 @@
-{
-  "name": "ing-web-gestion-habitos",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "react-vite"
-}

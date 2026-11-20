@@ -59,6 +59,8 @@ comunican únicamente por la API REST.
 
 ### Estructura del repositorio
 
+Esta rama contiene solo la API. El frontend (Ionic + React) está en la rama `frontend`.
+
 ```
 backend/
 ├── database/geshab.sql     Script reproducible de la base
@@ -70,10 +72,12 @@ backend/
 │   ├── middlewares/        JWT, rol admin, validación, errores
 │   ├── schemas/            Reglas de validación con zod
 │   ├── types/              Extensión del tipo Request de Express
-│   └── utils/              ErrorHttp
+│   └── utils/              ErrorHttp, ayudas de PostgreSQL
 ├── Dockerfile
 └── package.json
-docker-compose.yml
+anexos/                     Colección de Postman, reporte de newman y capturas
+docker-compose.yml          Base de datos + API con un solo comando
+docker-env.example          Variables para Docker
 ```
 
 ---
