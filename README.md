@@ -404,10 +404,40 @@ Al final de `database/geshab.sql` dejamos comentadas cuatro pruebas para correr 
 
 ## Pruebas de la API
 
-Las colecciones de Postman en formato `.json` y las capturas de las
-peticiones están en la carpeta `anexos/`.
+La colección completa está en `anexos/GesHab API.postman_collection.json`. Tiene 80 requests en 10 carpetas, que cubren todos los endpoints. Cada request tiene tests que comprueban el código HTTP esperado y, en los 400, que la respuesta indique el campo que falló.
 
-Para importarlas: en Postman, **File → Import** y seleccionar el archivo
-`.json`. Antes de ejecutarlas hay que iniciar sesión con
-`POST /api/auth/login` y copiar el token devuelto en la cabecera
-`Authorization: Bearer <token>` de las demás peticiones.
+Variables de la colección:
+
+| Variable | Valor inicial | Para qué |
+|---|---|---|
+| `baseUrl` | `http://localhost:3000` | Dirección del backend (las rutas incluyen `/api`) |
+| `token` | se llena solo | El request "Login usuario" guarda aquí el JWT |
+| `tokenAdmin` | se llena solo | El request "Login administrador" guarda aquí el JWT del admin |
+| `correoUsuario`, `contrasenaUsuario` | `ana@geshab.cl`, `Usuario123` | Usuario de prueba |
+| `idPlantillaAdoptar` | `2` | Plantilla que se adopta ("Comer una fruta") |
+
+La colección incluye los casos de error de la revisión:
+- fecha `hola` y `2026-02-31`;
+- ids no numéricos (`/tareas/abc`, `/registros/abc`);
+- JSON malformado;
+- `id_plantilla` inexistente;
+- adopción duplicada y de una plantilla desactivada (409);
+- `PUT` sin `completada` o sin `activo`;
+- requests sin token (401);
+- usuario normal en `/api/admin` (403).
+
+La última carpeta borra lo que se creó, así que se puede ejecutar varias veces seguidas.
+
+**En Postman:** File → Import, seleccionar el `.json` y ejecutarla completa con el Runner, en orden.
+
+**Con newman**, con el backend corriendo:
+
+```bash
+npx newman run "anexos/GesHab API.postman_collection.json"
+```
+
+El reporte de la última ejecución está en `anexos/newman-reporte.html` (80 requests, 133 aserciones, 0 fallos) y en formato JUnit en `anexos/newman-reporte.xml`. El reporte oculta la cabecera `Authorization` y las respuestas que contienen tokens.
+
+> Cada ejecución hace 3 intentos fallidos a `/api/auth`: contraseña débil, correo repetido y login incorrecto. El límite es 15 intentos fallidos cada 15 minutos, así que después de 5 ejecuciones seguidas el login responde 429 hasta que pasa la ventana.
+
+En `anexos/` también están las capturas de las peticiones y la colección del rol D (`GesHab - Rol D (admin y catalogo)`).

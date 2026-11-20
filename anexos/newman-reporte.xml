@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="GesHab API" tests="80" time="0.646">
+  <testsuite name="0. Salud / Estado del servidor" id="05526203-8c4f-4da2-8f15-396d856bccdd" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.017">
+    <testcase name="Responde 200" time="0.017" classname="0SaludEstadoDelServidor"/>
+    <testcase name="Base de datos conectada" time="0.017" classname="0SaludEstadoDelServidor"/>
+  </testsuite>
+  <testsuite name="1. Autenticación / Registro de usuario nuevo" id="52dabf8f-5f87-40e3-af56-940e2d5d9b80" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.063">
+    <testcase name="Responde 201" time="0.063" classname="1AutenticacionRegistroDeUsuarioNuevo"/>
+    <testcase name="Devuelve token y siempre rol usuario" time="0.063" classname="1AutenticacionRegistroDeUsuarioNuevo"/>
+  </testsuite>
+  <testsuite name="1. Autenticación / Registro con contraseña débil (400)" id="4cdfd1d3-2682-4043-97fa-77ef67c4614d" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 400" time="0.002" classname="1AutenticacionRegistroConContrasenaDebil400"/>
+    <testcase name="El error indica el campo 'contrasena'" time="0.002" classname="1AutenticacionRegistroConContrasenaDebil400"/>
+  </testsuite>
+  <testsuite name="1. Autenticación / Registro con correo ya usado (409)" id="58144030-924d-400c-8c80-34fb79654637" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 409" time="0.002" classname="1AutenticacionRegistroConCorreoYaUsado409"/>
+  </testsuite>
+  <testsuite name="1. Autenticación / Login con contraseña incorrecta (401)" id="95d3ed37-7eea-4ac8-8087-97e43cb92404" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.060">
+    <testcase name="Responde 401" time="0.060" classname="1AutenticacionLoginConContrasenaIncorrecta401"/>
+  </testsuite>
+  <testsuite name="1. Autenticación / Login administrador (guarda tokenAdmin)" id="8dcb7042-112f-4519-8568-0f156d10548e" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.060">
+    <testcase name="Responde 200" time="0.060" classname="1AutenticacionLoginAdministradorGuardaTokenAdmin"/>
+    <testcase name="Rol admin" time="0.060" classname="1AutenticacionLoginAdministradorGuardaTokenAdmin"/>
+  </testsuite>
+  <testsuite name="1. Autenticación / Login usuario (guarda token)" id="4c617a87-760e-4301-a095-438dcf1a705f" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.061">
+    <testcase name="Responde 200" time="0.061" classname="1AutenticacionLoginUsuarioGuardaToken"/>
+    <testcase name="Devuelve un JWT" time="0.061" classname="1AutenticacionLoginUsuarioGuardaToken"/>
+  </testsuite>
+  <testsuite name="1. Autenticación / Perfil del usuario" id="876caf64-0ede-4ad5-a1f0-e333e9de99d0" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 200" time="0.002" classname="1AutenticacionPerfilDelUsuario"/>
+    <testcase name="Es la cuenta del token" time="0.002" classname="1AutenticacionPerfilDelUsuario"/>
+  </testsuite>
+  <testsuite name="1. Autenticación / Perfil sin token (401)" id="987a96af-5f1a-4ab4-b4b7-a3b914c7e01a" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 401" time="0.002" classname="1AutenticacionPerfilSinToken401"/>
+  </testsuite>
+  <testsuite name="1. Autenticación / Perfil con token inválido (401)" id="9cdc5943-d877-4dc8-ba34-ae39207501cf" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 401" time="0.002" classname="1AutenticacionPerfilConTokenInvalido401"/>
+  </testsuite>
+  <testsuite name="2. Tareas (RF-01) / Listar tareas" id="adaab89e-a046-49a2-8fe2-541873343c2a" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.003">
+    <testcase name="Responde 200" time="0.003" classname="2TareasRf01ListarTareas"/>
+    <testcase name="Devuelve una lista" time="0.003" classname="2TareasRf01ListarTareas"/>
+  </testsuite>
+  <testsuite name="2. Tareas (RF-01) / Listar tareas sin token (401)" id="b2f99796-3757-45be-a69f-a4394f3076b6" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.001">
+    <testcase name="Responde 401" time="0.001" classname="2TareasRf01ListarTareasSinToken401"/>
+  </testsuite>
+  <testsuite name="2. Tareas (RF-01) / Crear tarea" id="eb9d4663-70e0-4b9c-899c-b38472a6e9cb" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 201" time="0.002" classname="2TareasRf01CrearTarea"/>
+    <testcase name="Queda pendiente" time="0.002" classname="2TareasRf01CrearTarea"/>
+  </testsuite>
+  <testsuite name="2. Tareas (RF-01) / Crear tarea con fecha &quot;hola&quot; (400)" id="c54ff4f0-9809-4c0f-a07f-aee889cb5318" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.001">
+    <testcase name="Responde 400" time="0.001" classname="2TareasRf01CrearTareaConFechaQuotHolaQuot400"/>
+    <testcase name="El error indica el campo 'fecha_limite'" time="0.001" classname="2TareasRf01CrearTareaConFechaQuotHolaQuot400"/>
+  </testsuite>
+  <testsuite name="2. Tareas (RF-01) / Crear tarea con fecha 2026-02-31 (400)" id="248e8534-bece-45d3-aa38-35cc75a0fff1" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 400" time="0.002" classname="2TareasRf01CrearTareaConFecha20260231400"/>
+    <testcase name="El error indica el campo 'fecha_limite'" time="0.002" classname="2TareasRf01CrearTareaConFecha20260231400"/>
+  </testsuite>
+  <testsuite name="2. Tareas (RF-01) / Crear tarea sin título (400)" id="992cf835-d3d2-4458-a77e-c35a0ae04124" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.001">
+    <testcase name="Responde 400" time="0.001" classname="2TareasRf01CrearTareaSinTitulo400"/>
+    <testcase name="El error indica el campo 'titulo'" time="0.001" classname="2TareasRf01CrearTareaSinTitulo400"/>
+  </testsuite>
+  <testsuite name="2. Tareas (RF-01) / Crear tarea con JSON malformado (400)" id="42a0957f-578f-4452-a63d-30d20fa253af" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 400" time="0.002" classname="2TareasRf01CrearTareaConJsonMalformado400"/>
+    <testcase name="El error indica el campo 'body'" time="0.002" classname="2TareasRf01CrearTareaConJsonMalformado400"/>
+  </testsuite>
+  <testsuite name="2. Tareas (RF-01) / Actualizar tarea sin &quot;completada&quot;" id="320f7790-085d-46ab-a19d-af0c5da130cd" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.003">
+    <testcase name="Responde 200" time="0.003" classname="2TareasRf01ActualizarTareaSinQuotCompletadaQuot"/>
+    <testcase name="Cambia solo el titulo" time="0.003" classname="2TareasRf01ActualizarTareaSinQuotCompletadaQuot"/>
+  </testsuite>
+  <testsuite name="2. Tareas (RF-01) / Marcar tarea completada" id="eba54529-5955-43f3-94bc-f37cba8ad87a" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 200" time="0.002" classname="2TareasRf01MarcarTareaCompletada"/>
+    <testcase name="Completada" time="0.002" classname="2TareasRf01MarcarTareaCompletada"/>
+  </testsuite>
+  <testsuite name="2. Tareas (RF-01) / Actualizar con body vacío (400)" id="8c8b072d-ba70-46f4-9ac0-291e2ecd98d8" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 400" time="0.002" classname="2TareasRf01ActualizarConBodyVacio400"/>
+    <testcase name="El error indica el campo 'body'" time="0.002" classname="2TareasRf01ActualizarConBodyVacio400"/>
+  </testsuite>
+  <testsuite name="2. Tareas (RF-01) / Actualizar /tareas/abc (400)" id="0324ffe9-efbf-4b85-ae68-f1de5096d66e" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 400" time="0.002" classname="2TareasRf01ActualizarTareasAbc400"/>
+    <testcase name="El error indica el campo 'id'" time="0.002" classname="2TareasRf01ActualizarTareasAbc400"/>
+  </testsuite>
+  <testsuite name="2. Tareas (RF-01) / Actualizar tarea inexistente (404)" id="68b6ee54-d9a2-4240-9c9c-6c08cfd8ea7a" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 404" time="0.002" classname="2TareasRf01ActualizarTareaInexistente404"/>
+  </testsuite>
+  <testsuite name="2. Tareas (RF-01) / Eliminar tarea" id="87d1dfe8-8d58-4af6-9e2b-289ece9d1471" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.003">
+    <testcase name="Responde 200" time="0.003" classname="2TareasRf01EliminarTarea"/>
+  </testsuite>
+  <testsuite name="2. Tareas (RF-01) / Eliminar tarea ya eliminada (404)" id="868d3f3f-1e82-489e-b925-b6a6123adfb3" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 404" time="0.002" classname="2TareasRf01EliminarTareaYaEliminada404"/>
+  </testsuite>
+  <testsuite name="3. Hábitos (RF-02, RF-03, RF-06) / Listar hábitos" id="2b971f4a-a863-4524-918b-cb1b97628350" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Responde 200" time="0.004" classname="3HabitosRf02Rf03Rf06ListarHabitos"/>
+    <testcase name="Devuelve una lista" time="0.004" classname="3HabitosRf02Rf03Rf06ListarHabitos"/>
+  </testsuite>
+  <testsuite name="3. Hábitos (RF-02, RF-03, RF-06) / Crear hábito propio" id="dbd24392-d05c-4c4c-9975-a844c01da904" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Responde 201" time="0.004" classname="3HabitosRf02Rf03Rf06CrearHabitoPropio"/>
+    <testcase name="Sin plantilla y activo" time="0.004" classname="3HabitosRf02Rf03Rf06CrearHabitoPropio"/>
+  </testsuite>
+  <testsuite name="3. Hábitos (RF-02, RF-03, RF-06) / Crear hábito sin nombre (400)" id="aa3b7527-e0e5-46d5-a40d-bd82a9cd5a00" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.001">
+    <testcase name="Responde 400" time="0.001" classname="3HabitosRf02Rf03Rf06CrearHabitoSinNombre400"/>
+    <testcase name="El error indica el campo 'nombre'" time="0.001" classname="3HabitosRf02Rf03Rf06CrearHabitoSinNombre400"/>
+  </testsuite>
+  <testsuite name="3. Hábitos (RF-02, RF-03, RF-06) / Crear hábito con horario 25:00 (400)" id="4e47d549-b68a-44ea-ae5c-dfc4d0536884" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 400" time="0.002" classname="3HabitosRf02Rf03Rf06CrearHabitoConHorario2500400"/>
+    <testcase name="El error indica el campo 'horario_objetivo'" time="0.002" classname="3HabitosRf02Rf03Rf06CrearHabitoConHorario2500400"/>
+  </testsuite>
+  <testsuite name="3. Hábitos (RF-02, RF-03, RF-06) / Adoptar plantilla inexistente (400)" id="ade0420e-1e9e-4e7b-80c5-ee3d2cdb08f0" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Responde 400" time="0.004" classname="3HabitosRf02Rf03Rf06AdoptarPlantillaInexistente400"/>
+    <testcase name="El error indica el campo 'id_plantilla'" time="0.004" classname="3HabitosRf02Rf03Rf06AdoptarPlantillaInexistente400"/>
+  </testsuite>
+  <testsuite name="3. Hábitos (RF-02, RF-03, RF-06) / Adoptar plantilla del catálogo" id="3b7dc14b-468d-4a77-98b4-01df3b8dfb80" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.003">
+    <testcase name="Responde 201" time="0.003" classname="3HabitosRf02Rf03Rf06AdoptarPlantillaDelCatalogo"/>
+    <testcase name="Queda ligada a la plantilla" time="0.003" classname="3HabitosRf02Rf03Rf06AdoptarPlantillaDelCatalogo"/>
+  </testsuite>
+  <testsuite name="3. Hábitos (RF-02, RF-03, RF-06) / Adoptar la misma plantilla otra vez (409)" id="5266e5b2-0eef-4ea0-b454-a67f82b536c6" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Responde 409" time="0.004" classname="3HabitosRf02Rf03Rf06AdoptarLaMismaPlantillaOtraVez409"/>
+    <testcase name="Mensaje: Ya adoptaste esta plantilla" time="0.004" classname="3HabitosRf02Rf03Rf06AdoptarLaMismaPlantillaOtraVez409"/>
+  </testsuite>
+  <testsuite name="3. Hábitos (RF-02, RF-03, RF-06) / Actualizar hábito sin &quot;activo&quot;" id="9d550d03-5dc7-42c4-9091-2e2d19c50da8" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.030">
+    <testcase name="Responde 200" time="0.030" classname="3HabitosRf02Rf03Rf06ActualizarHabitoSinQuotActivoQuot"/>
+    <testcase name="Sigue activo y cambia el nombre" time="0.030" classname="3HabitosRf02Rf03Rf06ActualizarHabitoSinQuotActivoQuot"/>
+  </testsuite>
+  <testsuite name="3. Hábitos (RF-02, RF-03, RF-06) / Actualizar /habitos/abc (400)" id="b542f9c6-64aa-4531-88a7-d6cfdae2bd75" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.001">
+    <testcase name="Responde 400" time="0.001" classname="3HabitosRf02Rf03Rf06ActualizarHabitosAbc400"/>
+    <testcase name="El error indica el campo 'id'" time="0.001" classname="3HabitosRf02Rf03Rf06ActualizarHabitosAbc400"/>
+  </testsuite>
+  <testsuite name="3. Hábitos (RF-02, RF-03, RF-06) / Check-in de hoy" id="7cf0ebaa-3b3e-4341-9005-bd5e49740e27" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.003">
+    <testcase name="Responde 201" time="0.003" classname="3HabitosRf02Rf03Rf06CheckInDeHoy"/>
+  </testsuite>
+  <testsuite name="3. Hábitos (RF-02, RF-03, RF-06) / Check-in repetido el mismo día (409)" id="8e23d816-31f5-4bbc-962f-5f9519d8cefe" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.003">
+    <testcase name="Responde 409" time="0.003" classname="3HabitosRf02Rf03Rf06CheckInRepetidoElMismoDia409"/>
+  </testsuite>
+  <testsuite name="3. Hábitos (RF-02, RF-03, RF-06) / Check-in con fecha 2026-02-31 (400)" id="857022a7-eec1-497c-b90c-5ff3185a37bb" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.001">
+    <testcase name="Responde 400" time="0.001" classname="3HabitosRf02Rf03Rf06CheckInConFecha20260231400"/>
+    <testcase name="El error indica el campo 'fecha'" time="0.001" classname="3HabitosRf02Rf03Rf06CheckInConFecha20260231400"/>
+  </testsuite>
+  <testsuite name="3. Hábitos (RF-02, RF-03, RF-06) / Check-in con fecha futura (400)" id="87adac05-271c-46ec-89ea-1a26117d4087" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.031">
+    <testcase name="Responde 400" time="0.031" classname="3HabitosRf02Rf03Rf06CheckInConFechaFutura400"/>
+    <testcase name="El error indica el campo 'fecha'" time="0.031" classname="3HabitosRf02Rf03Rf06CheckInConFechaFutura400"/>
+  </testsuite>
+  <testsuite name="3. Hábitos (RF-02, RF-03, RF-06) / Check-in en hábito ajeno o inexistente (404)" id="2bf50af4-85ea-4685-8f58-9cbae0c7363f" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.029">
+    <testcase name="Responde 404" time="0.029" classname="3HabitosRf02Rf03Rf06CheckInEnHabitoAjenoOInexistente404"/>
+  </testsuite>
+  <testsuite name="4. Registros de cumplimiento (RF-03) / Listar registros" id="b250d384-e21c-442c-96db-2ae594ca4054" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Responde 200" time="0.004" classname="4RegistrosDeCumplimientoRf03ListarRegistros"/>
+    <testcase name="Devuelve una lista" time="0.004" classname="4RegistrosDeCumplimientoRf03ListarRegistros"/>
+  </testsuite>
+  <testsuite name="4. Registros de cumplimiento (RF-03) / Crear registro de ayer" id="582c253a-fcb7-4455-b2fd-33dac90ddc2f" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.003">
+    <testcase name="Responde 201" time="0.003" classname="4RegistrosDeCumplimientoRf03CrearRegistroDeAyer"/>
+  </testsuite>
+  <testsuite name="4. Registros de cumplimiento (RF-03) / Crear registro con fecha 2026-02-31 (400)" id="b9adbdf7-204a-4a3e-999d-1ad723d0c4ba" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 400" time="0.002" classname="4RegistrosDeCumplimientoRf03CrearRegistroConFecha20260231400"/>
+    <testcase name="El error indica el campo 'fecha'" time="0.002" classname="4RegistrosDeCumplimientoRf03CrearRegistroConFecha20260231400"/>
+  </testsuite>
+  <testsuite name="4. Registros de cumplimiento (RF-03) / Crear registro con id_habito &quot;abc&quot; (400)" id="4672280b-b98d-419a-a45c-f87684506947" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.001">
+    <testcase name="Responde 400" time="0.001" classname="4RegistrosDeCumplimientoRf03CrearRegistroConIdHabitoQuotAbcQuot400"/>
+    <testcase name="El error indica el campo 'id_habito'" time="0.001" classname="4RegistrosDeCumplimientoRf03CrearRegistroConIdHabitoQuotAbcQuot400"/>
+  </testsuite>
+  <testsuite name="4. Registros de cumplimiento (RF-03) / Mover registro a un día ya registrado (409)" id="16ede499-e4c0-4201-af64-680f687a9b4e" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.004">
+    <testcase name="Responde 409" time="0.004" classname="4RegistrosDeCumplimientoRf03MoverRegistroAUnDiaYaRegistrado409"/>
+  </testsuite>
+  <testsuite name="4. Registros de cumplimiento (RF-03) / Mover registro a anteayer" id="d6ab78a5-0b09-4f66-be2c-89035d152430" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.033">
+    <testcase name="Responde 200" time="0.033" classname="4RegistrosDeCumplimientoRf03MoverRegistroAAnteayer"/>
+    <testcase name="Fecha actualizada" time="0.033" classname="4RegistrosDeCumplimientoRf03MoverRegistroAAnteayer"/>
+  </testsuite>
+  <testsuite name="4. Registros de cumplimiento (RF-03) / Actualizar /registros/abc (400)" id="976de9b7-d85e-4b3c-a25e-dc46a7233cfb" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.001">
+    <testcase name="Responde 400" time="0.001" classname="4RegistrosDeCumplimientoRf03ActualizarRegistrosAbc400"/>
+    <testcase name="El error indica el campo 'id'" time="0.001" classname="4RegistrosDeCumplimientoRf03ActualizarRegistrosAbc400"/>
+  </testsuite>
+  <testsuite name="4. Registros de cumplimiento (RF-03) / Eliminar registro" id="b60df431-6397-4e48-aaf4-adbad77efd08" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 200" time="0.002" classname="4RegistrosDeCumplimientoRf03EliminarRegistro"/>
+  </testsuite>
+  <testsuite name="5. Progreso (RF-04) / Progreso semanal" id="f8c7074d-83f2-4f69-8b8c-a8a555ef6059" timestamp="2026-11-20T02:29:22.325Z" tests="4" failures="0" errors="0" time="0.006">
+    <testcase name="Responde 200" time="0.006" classname="5ProgresoRf04ProgresoSemanal"/>
+    <testcase name="Trae porcentaje general y categorias" time="0.006" classname="5ProgresoRf04ProgresoSemanal"/>
+    <testcase name="Cada habito trae cumplidos, esperados y porcentaje" time="0.006" classname="5ProgresoRf04ProgresoSemanal"/>
+    <testcase name="El hábito creado hoy: 1 de 1, 100% y racha 1" time="0.006" classname="5ProgresoRf04ProgresoSemanal"/>
+  </testsuite>
+  <testsuite name="5. Progreso (RF-04) / Progreso mensual" id="68e168fe-903a-458b-aa8d-9ff9d788e4b3" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.003">
+    <testcase name="Responde 200" time="0.003" classname="5ProgresoRf04ProgresoMensual"/>
+    <testcase name="Periodo mensual" time="0.003" classname="5ProgresoRf04ProgresoMensual"/>
+  </testsuite>
+  <testsuite name="5. Progreso (RF-04) / Progreso sin periodo (400)" id="d2add41a-51f7-41bb-a104-e8ddae70345b" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 400" time="0.002" classname="5ProgresoRf04ProgresoSinPeriodo400"/>
+    <testcase name="El error indica el campo 'periodo'" time="0.002" classname="5ProgresoRf04ProgresoSinPeriodo400"/>
+  </testsuite>
+  <testsuite name="6. Recordatorios (RF-05) / Crear recordatorio" id="26d3a050-9399-43c3-a09b-9b242dbeda28" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.006">
+    <testcase name="Responde 201" time="0.006" classname="6RecordatoriosRf05CrearRecordatorio"/>
+    <testcase name="Devuelve el recordatorio con el nombre del hábito" time="0.006" classname="6RecordatoriosRf05CrearRecordatorio"/>
+  </testsuite>
+  <testsuite name="6. Recordatorios (RF-05) / Crear recordatorio repetido (409)" id="a93b567b-ce0d-43c9-b22d-77a5b5ebcfe7" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.003">
+    <testcase name="Responde 409" time="0.003" classname="6RecordatoriosRf05CrearRecordatorioRepetido409"/>
+  </testsuite>
+  <testsuite name="6. Recordatorios (RF-05) / Crear recordatorio con día 8 (400)" id="f4eaaae0-f777-4c14-92ce-36fa97ca5ab8" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.001">
+    <testcase name="Responde 400" time="0.001" classname="6RecordatoriosRf05CrearRecordatorioConDia8400"/>
+    <testcase name="El error indica el campo 'dia_semana'" time="0.001" classname="6RecordatoriosRf05CrearRecordatorioConDia8400"/>
+  </testsuite>
+  <testsuite name="6. Recordatorios (RF-05) / Crear recordatorio en hábito ajeno (404)" id="902fafe7-04d0-4ef7-a170-bb70f14eafb2" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.028">
+    <testcase name="Responde 404" time="0.028" classname="6RecordatoriosRf05CrearRecordatorioEnHabitoAjeno404"/>
+  </testsuite>
+  <testsuite name="6. Recordatorios (RF-05) / Listar recordatorios del hábito" id="c3c30c29-9057-4cde-a579-c19264f99f3e" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.005">
+    <testcase name="Responde 200" time="0.005" classname="6RecordatoriosRf05ListarRecordatoriosDelHabito"/>
+    <testcase name="Solo los del hábito pedido" time="0.005" classname="6RecordatoriosRf05ListarRecordatoriosDelHabito"/>
+  </testsuite>
+  <testsuite name="6. Recordatorios (RF-05) / Listar con id_habito=abc (400)" id="14fdf3bc-14d0-408d-81b0-f05711feb25f" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.001">
+    <testcase name="Responde 400" time="0.001" classname="6RecordatoriosRf05ListarConIdHabitoAbc400"/>
+    <testcase name="El error indica el campo 'id_habito'" time="0.001" classname="6RecordatoriosRf05ListarConIdHabitoAbc400"/>
+  </testsuite>
+  <testsuite name="6. Recordatorios (RF-05) / Desactivar recordatorio" id="4297deeb-0755-431f-8e3c-cf4754808e05" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="Responde 200" time="0.004" classname="6RecordatoriosRf05DesactivarRecordatorio"/>
+    <testcase name="Queda desactivado y conserva la hora" time="0.004" classname="6RecordatoriosRf05DesactivarRecordatorio"/>
+  </testsuite>
+  <testsuite name="6. Recordatorios (RF-05) / Actualizar /recordatorios/abc (400)" id="61318732-c131-4cf0-b815-9fdf607253ae" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 400" time="0.002" classname="6RecordatoriosRf05ActualizarRecordatoriosAbc400"/>
+    <testcase name="El error indica el campo 'id'" time="0.002" classname="6RecordatoriosRf05ActualizarRecordatoriosAbc400"/>
+  </testsuite>
+  <testsuite name="6. Recordatorios (RF-05) / Eliminar recordatorio" id="cb8d0854-a97a-4bf4-9dfd-c405732291bb" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 200" time="0.002" classname="6RecordatoriosRf05EliminarRecordatorio"/>
+  </testsuite>
+  <testsuite name="6. Recordatorios (RF-05) / Eliminar recordatorio ya eliminado (404)" id="08ef16fd-66ae-4c57-b1eb-5e1111037d0c" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 404" time="0.002" classname="6RecordatoriosRf05EliminarRecordatorioYaEliminado404"/>
+  </testsuite>
+  <testsuite name="7. Catálogo (RF-06) / Catálogo completo" id="8ac0e3ed-b2a7-459d-9e98-b3460ed6f699" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.006">
+    <testcase name="Responde 200" time="0.006" classname="7CatalogoRf06CatalogoCompleto"/>
+    <testcase name="Marca la plantilla ya adoptada" time="0.006" classname="7CatalogoRf06CatalogoCompleto"/>
+  </testsuite>
+  <testsuite name="7. Catálogo (RF-06) / Catálogo filtrado por dificultad baja" id="0466240e-0e36-4181-91e1-527d4c39675c" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 200" time="0.002" classname="7CatalogoRf06CatalogoFiltradoPorDificultadBaja"/>
+    <testcase name="Todas de dificultad baja" time="0.002" classname="7CatalogoRf06CatalogoFiltradoPorDificultadBaja"/>
+  </testsuite>
+  <testsuite name="7. Catálogo (RF-06) / Catálogo con dificultad inválida (400)" id="c7a63b7c-af8b-453d-8640-6e2d9d80d559" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.001">
+    <testcase name="Responde 400" time="0.001" classname="7CatalogoRf06CatalogoConDificultadInvalida400"/>
+    <testcase name="El error indica el campo 'dificultad'" time="0.001" classname="7CatalogoRf06CatalogoConDificultadInvalida400"/>
+  </testsuite>
+  <testsuite name="8. Administración (RF-07, RF-08) / Usuario normal en /admin (403)" id="26a5d9cc-c585-4507-a07b-37c2e4624f0a" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.001">
+    <testcase name="Responde 403" time="0.001" classname="8AdministracionRf07Rf08UsuarioNormalEnAdmin403"/>
+  </testsuite>
+  <testsuite name="8. Administración (RF-07, RF-08) / Sin token en /admin (401)" id="ec56bf0e-6914-4179-bc69-2c8d33ccf61f" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.001">
+    <testcase name="Responde 401" time="0.001" classname="8AdministracionRf07Rf08SinTokenEnAdmin401"/>
+  </testsuite>
+  <testsuite name="8. Administración (RF-07, RF-08) / Listar plantillas" id="b4f8ae7c-42a0-4ac1-80e1-bd33c559212e" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 200" time="0.002" classname="8AdministracionRf07Rf08ListarPlantillas"/>
+    <testcase name="Devuelve una lista" time="0.002" classname="8AdministracionRf07Rf08ListarPlantillas"/>
+  </testsuite>
+  <testsuite name="8. Administración (RF-07, RF-08) / Listar categorías" id="59123fd3-b677-4463-b4c6-c3c0e518bf00" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 200" time="0.002" classname="8AdministracionRf07Rf08ListarCategorias"/>
+    <testcase name="Devuelve una lista" time="0.002" classname="8AdministracionRf07Rf08ListarCategorias"/>
+  </testsuite>
+  <testsuite name="8. Administración (RF-07, RF-08) / Crear categoría" id="dc925488-fd75-4a43-b1b0-9e2c4f3a9563" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 201" time="0.002" classname="8AdministracionRf07Rf08CrearCategoria"/>
+  </testsuite>
+  <testsuite name="8. Administración (RF-07, RF-08) / Crear categoría duplicada (409)" id="d0aad7ad-f1eb-431a-9b3e-8754d613e7fc" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 409" time="0.002" classname="8AdministracionRf07Rf08CrearCategoriaDuplicada409"/>
+  </testsuite>
+  <testsuite name="8. Administración (RF-07, RF-08) / Crear categoría con nombre corto (400)" id="a0d5c698-a22a-4437-a99c-b91e47979527" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.001">
+    <testcase name="Responde 400" time="0.001" classname="8AdministracionRf07Rf08CrearCategoriaConNombreCorto400"/>
+    <testcase name="El error indica el campo 'nombre'" time="0.001" classname="8AdministracionRf07Rf08CrearCategoriaConNombreCorto400"/>
+  </testsuite>
+  <testsuite name="8. Administración (RF-07, RF-08) / Crear plantilla desactivada" id="e69a3442-bf2c-4373-8a1c-e9f318937769" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.034">
+    <testcase name="Responde 201" time="0.034" classname="8AdministracionRf07Rf08CrearPlantillaDesactivada"/>
+  </testsuite>
+  <testsuite name="8. Administración (RF-07, RF-08) / Usuario adopta la plantilla desactivada (409)" id="aec53e8d-1ce9-4814-8c5c-21fe3cf2db70" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 409" time="0.002" classname="8AdministracionRf07Rf08UsuarioAdoptaLaPlantillaDesactivada409"/>
+    <testcase name="Mensaje: La plantilla está desactivada y no se puede adoptar" time="0.002" classname="8AdministracionRf07Rf08UsuarioAdoptaLaPlantillaDesactivada409"/>
+  </testsuite>
+  <testsuite name="8. Administración (RF-07, RF-08) / La plantilla desactivada no sale en el catálogo" id="766f3beb-7878-43c4-99b9-196546650fea" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 200" time="0.002" classname="8AdministracionRf07Rf08LaPlantillaDesactivadaNoSaleEnElCatalogo"/>
+    <testcase name="No aparece" time="0.002" classname="8AdministracionRf07Rf08LaPlantillaDesactivadaNoSaleEnElCatalogo"/>
+  </testsuite>
+  <testsuite name="8. Administración (RF-07, RF-08) / Actualizar /admin/plantillas/abc (400)" id="9c475700-84cb-4763-a9cd-ea7f2b8a75bb" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 400" time="0.002" classname="8AdministracionRf07Rf08ActualizarAdminPlantillasAbc400"/>
+    <testcase name="El error indica el campo 'id'" time="0.002" classname="8AdministracionRf07Rf08ActualizarAdminPlantillasAbc400"/>
+  </testsuite>
+  <testsuite name="8. Administración (RF-07, RF-08) / Eliminar categoría con plantillas (409)" id="fd1e2891-8138-4bee-930f-3e2895f2ebc4" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 409" time="0.002" classname="8AdministracionRf07Rf08EliminarCategoriaConPlantillas409"/>
+  </testsuite>
+  <testsuite name="8. Administración (RF-07, RF-08) / Eliminar plantilla" id="dd8a2bac-5cb4-4508-9e72-f6ea947131cb" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.004">
+    <testcase name="Responde 200" time="0.004" classname="8AdministracionRf07Rf08EliminarPlantilla"/>
+  </testsuite>
+  <testsuite name="8. Administración (RF-07, RF-08) / Eliminar categoría" id="155ccbc6-9e60-4bc5-aa93-f92a8d4e4c5a" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.003">
+    <testcase name="Responde 200" time="0.003" classname="8AdministracionRf07Rf08EliminarCategoria"/>
+  </testsuite>
+  <testsuite name="8. Administración (RF-07, RF-08) / Métricas generales" id="33d51cbf-e9c8-4aa5-a72a-e57ee88e024b" timestamp="2026-11-20T02:29:22.325Z" tests="2" failures="0" errors="0" time="0.035">
+    <testcase name="Responde 200" time="0.035" classname="8AdministracionRf07Rf08MetricasGenerales"/>
+    <testcase name="Sin datos personales" time="0.035" classname="8AdministracionRf07Rf08MetricasGenerales"/>
+  </testsuite>
+  <testsuite name="9. Limpieza / Eliminar hábito adoptado" id="ce3f98a1-a7ed-4e03-9a56-57f4429bd2ad" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="Responde 200" time="0.005" classname="9LimpiezaEliminarHabitoAdoptado"/>
+  </testsuite>
+  <testsuite name="9. Limpieza / Eliminar hábito propio" id="b53201db-0b3d-4264-9362-9934a8537662" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.002">
+    <testcase name="Responde 200" time="0.002" classname="9LimpiezaEliminarHabitoPropio"/>
+  </testsuite>
+  <testsuite name="9. Limpieza / Eliminar hábito ya eliminado (404)" id="7b21dc3a-28df-421a-a40a-231f8b2ad81e" timestamp="2026-11-20T02:29:22.325Z" tests="1" failures="0" errors="0" time="0.001">
+    <testcase name="Responde 404" time="0.001" classname="9LimpiezaEliminarHabitoYaEliminado404"/>
+  </testsuite>
+</testsuites>

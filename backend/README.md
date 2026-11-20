@@ -291,4 +291,4 @@ backend/
 
 ## Evidencia Colecciones Postman
 
-Las colecciones de Postman en formato .json y las capturas de pantallas de distintas instancias de envío de peticiones se pueden encontrar en la carpeta 'anexos'.
+La colección completa con tests es `anexos/GesHab API.postman_collection.json`, y el reporte de newman está en `anexos/newman-reporte.html`. Las instrucciones están en la sección [Pruebas de la API](../README.md#pruebas-de-la-api) del README principal. Las capturas de pantalla de las peticiones están en la carpeta `anexos/`.
