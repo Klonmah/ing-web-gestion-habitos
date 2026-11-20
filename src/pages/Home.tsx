@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   IonPage, IonContent, IonButton, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle,
-  IonCheckbox, IonToast, IonCol, IonGrid, IonRow, IonSplitPane, IonSpinner, IonText
+  IonCheckbox, IonToast, IonCol, IonGrid, IonRow, IonSplitPane, IonSpinner, IonText,
+  useIonViewWillEnter
 } from '@ionic/react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import LeftSideMenu from '../components/LeftSideMenu';
 import { obtenerUsuario } from '../services/api';
 import {
@@ -55,6 +56,23 @@ const Home: React.FC = () => {
   useEffect(() => {
     void cargar();
   }, [cargar]);
+
+  // Ionic puede dejar esta pagina montada al navegar a otra: al volver
+  // (por ejemplo despues de crear un habito) se pide la lista de nuevo.
+  useIonViewWillEnter(() => {
+    void cargar();
+  });
+
+  // Aviso al volver de "Hábito nuevo". Se limpia el state para que no
+  // se repita al recargar la pagina.
+  const location = useLocation();
+  const habitoCreado = (location.state as { habitoCreado?: string } | null)?.habitoCreado;
+  useEffect(() => {
+    if (!habitoCreado) return;
+    setAviso({ texto: `"${habitoCreado}" agregado a tus hábitos.`, color: 'success' });
+    void cargar();
+    navigate(location.pathname, { replace: true, state: null });
+  }, [habitoCreado, cargar, navigate, location.pathname]);
 
   // RNF-03: check-in de un toque desde el inicio.
   // RF-03: la racha la recalcula el backend; tras marcar se vuelve a pedir.

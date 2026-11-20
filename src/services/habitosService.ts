@@ -73,6 +73,47 @@ export const listarHabitosDeHoy = async (): Promise<HabitoHoy[]> => {
     });
 };
 
+/** Habito del usuario (para selectores y listados). */
+export interface HabitoResumen {
+  id: number;
+  nombre: string;
+  frecuencia: Frecuencia;
+  activo: boolean;
+}
+
+/** Todos los habitos del usuario, activos primero y por nombre. */
+export const listarMisHabitos = async (): Promise<HabitoResumen[]> => {
+  const habitos = await api<HabitoApi[]>('/habitos');
+  return habitos
+    .map((h) => ({ id: h.id_habito, nombre: h.nombre, frecuencia: h.frecuencia, activo: h.activo }))
+    .sort((a, b) => Number(b.activo) - Number(a.activo) || a.nombre.localeCompare(b.nombre, 'es'));
+};
+
+/** Campos del formulario "Hábito nuevo". Meta y horario son opcionales. */
+export interface DatosHabitoNuevo {
+  nombre: string;
+  frecuencia: Frecuencia;
+  meta: string;
+  horario: string; // HH:MM o ''
+}
+
+/**
+ * Crea un habito propio, sin plantilla (RF-02). Las reglas de cada campo
+ * las valida el backend; si algo falla responde 400 con el campo.
+ */
+export const crearHabito = async (datos: DatosHabitoNuevo): Promise<number> => {
+  const creado = await api<HabitoApi>('/habitos', {
+    metodo: 'POST',
+    cuerpo: {
+      nombre: datos.nombre.trim(),
+      frecuencia: datos.frecuencia,
+      meta: datos.meta.trim() || null,
+      horario_objetivo: datos.horario || null,
+    },
+  });
+  return creado.id_habito;
+};
+
 /** Datos minimos de una plantilla del catalogo para adoptarla. */
 export interface PlantillaAdoptable {
   id_plantilla: number;

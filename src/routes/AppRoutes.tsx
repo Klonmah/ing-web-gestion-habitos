@@ -8,6 +8,7 @@ import Registro from '../pages/Registro';
 import Catalogo from '../pages/Catalogo';
 import Progreso from '../pages/Progreso';
 import CategoriasMetricas from '../pages/CategoriasMetricas';
+import NuevoHabito from '../pages/NuevoHabito';
 import PaginaPlaceholder from '../pages/PaginaPlaceholder';
 import { IonRouterOutlet } from '@ionic/react';
 import ProtectedRoute from './ProtectedRoute';
@@ -28,7 +29,7 @@ function AppRoutes() {
             <Route path="/inicio" element={<ProtectedRoute><Home /></ProtectedRoute>} />
             <Route path="/catalogo" element={<ProtectedRoute><Catalogo /></ProtectedRoute>} />
 
-            <Route path="/habitos/nuevo" element={<ProtectedRoute><PaginaPlaceholder /></ProtectedRoute>} />
+            <Route path="/habitos/nuevo" element={<ProtectedRoute><NuevoHabito /></ProtectedRoute>} />
 
             <Route path="/progreso" element={<ProtectedRoute><Progreso /></ProtectedRoute>} />
             <Route path="/perfil" element={<ProtectedRoute><PaginaPlaceholder /></ProtectedRoute>} />
