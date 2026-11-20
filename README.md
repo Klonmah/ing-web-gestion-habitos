@@ -121,99 +121,89 @@ Los requerimientos no funcionales establecen condiciones de calidad que deberá 
 ## Arquitectura de Navegación
 ---
 
-### 1.Rutas Principales y Secundarias:
+Las rutas están definidas en `src/routes/AppRoutes.tsx`, y estas tablas listan exactamente esas rutas. Crear y editar tareas, plantillas y categorías no tiene ruta propia: se hace en modales dentro de `/tareas`, `/admin/plantillas` y `/admin/categorias-metricas`.
+
+### 1. Rutas Principales y Secundarias:
 
 **Rutas públicas:**
 
-| Ruta               | Vista           | Redirección                                                                                | Descripción                                                                                       |
-| ------------------ | --------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
-| `/login`           | Login           | Tiene sesión de Usuario -> `/inicio`, Tiene sesión de Administrador -> `/admin/plantillas` | Permite al Usuario ingresar a la App con los datos de su cuenta                                   |
-| `/registro`        | Registro        | Tiene sesión de Usuario -> `/inicio`, Tiene sesión de Administrador -> `/admin/plantillas` | Permite Crear una nueva cuenta para el Usuario.                                                   |
-| `/acceso-denegado` | Acceso Denegado | Ninguna                                                                                    | Página a la cual se envían a las personas que intentan entrar a rutas de administrador sin serlo. |
+| Ruta               | Vista           | Redirección                                                                          | Descripción                                                                                                          |
+| ------------------ | --------------- | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| `/login`           | Login           | Con sesión de usuario → `/inicio`; con sesión de administrador → `/admin/plantillas` | Inicia sesión con correo y contraseña. Tiene un enlace a `/registro`.                                                 |
+| `/registro`        | Registro        | Igual que `/login`                                                                   | Crea una cuenta nueva (siempre con rol usuario) y entra directo a `/inicio`.                                          |
+| `/acceso-denegado` | Acceso denegado | Ninguna                                                                              | Se muestra cuando un usuario normal intenta abrir una ruta de administrador. Tiene un botón para volver a su inicio. |
 
+**Rutas protegidas del usuario** (pantallas principales, con pestaña en la barra inferior en móvil):
 
-**Rutas Protegidas del Usuario:**
+| Ruta        | Vista      | RF           | Descripción                                                                                                                                       |
+| ----------- | ---------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/inicio`   | Inicio     | RF-02, RF-03 | Lista los hábitos del día con su racha. Marcarlos registra el cumplimiento. El botón "Agregar hábito" lleva a `/habitos/nuevo`.                   |
+| `/tareas`   | Mis tareas | RF-01        | Lista las tareas con fecha límite y prioridad. Crear y editar se hacen en un modal; eliminar pide confirmación.                                   |
+| `/catalogo` | Catálogo   | RF-06        | Plantillas activas filtrables por categoría y dificultad, con botón para adoptarlas.                                                               |
+| `/progreso` | Progreso   | RF-04        | Porcentaje de cumplimiento semanal y mensual: general, por categoría y por hábito.                                                                 |
+| `/perfil`   | Perfil     | -            | Datos de la cuenta y resumen de actividad. Lleva a `/configuraciones` y, desde ahí, a `/recordatorios`. También la puede abrir el administrador. |
 
-| Ruta        | Vista      | RF           | Descripción                                                                                                                |
-| ----------- | ---------- | ------------ | -------------------------------------------------------------------------------------------------------------------------- |
-| `/inicio`   | Inicio     | RF-03        | Lista los hábitos del día. Al marcar uno como cumplido se guarda la fecha y hora del cumplimiento y se actualiza su racha. |
-| `/tareas`   | Mis tareas | RF-01        | Lista las tareas del usuario con su fecha límite y prioridad, y permite crear, editar o eliminar cada una                  |
-| `/catalogo` | Catálogo   | RF-02, RF-06 | Muestra plantillas de hábitos filtrables por categoría y dificultad, y permite adoptarlas                                  |
-| `/progreso` | Progreso   | RF-04        | Permite ver el porcentaje de cumplimiento de hábitos de forma semanal y mensual.                                           |
-| `/perfil`   | Perfil     |              | Muestra los datos de la cuenta (desde `GET /api/auth/perfil`) y un resumen de actividad: hábitos activos, cumplimiento semanal, tareas y mejor racha. Da acceso a las configuraciones. |
+**Rutas secundarias del usuario** (con botón para volver a la pantalla padre):
 
-Si no hay sesión, todas redirigen a `/login`.
+| Ruta               | Vista         | Padre     | RF    | Descripción                                                                                                                       |
+| ------------------ | ------------- | --------- | ----- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `/habitos/nuevo`   | Hábito nuevo  | `/inicio` | RF-02 | Crea un hábito propio, sin plantilla, con nombre, frecuencia, meta y horario. Los errores del backend se muestran bajo cada campo. |
+| `/recordatorios`   | Recordatorios | `/perfil` | RF-05 | Recordatorios agrupados por hábito: crear (uno o varios días y una hora), activar o desactivar y eliminar.                         |
+| `/configuraciones` | Configuración | `/perfil` | -     | Sesión actual (cuenta, rol y vencimiento) y cierre de sesión con confirmación. También la puede abrir el administrador.           |
 
- **Rutas Secundarias del Usuario:**
+Sin sesión, todas redirigen a `/login`. Si un administrador abre una ruta de usuario, vuelve a `/admin/plantillas`. La excepción son `/perfil` y `/configuraciones`, que son para ambos roles.
 
-| Ruta                  | Vista               | Padre                   | RF           | Descripción                                                                                                                                   |
-| --------------------- | ------------------- | ----------------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `/tareas/nueva`       | Nueva tarea         | `/tareas`               | RF-01        | Página para que el usuario pueda crear una nueva tarea.                                                                                       |
-| `/tareas/:id/editar`  | Editar tarea        | `/tareas`               | RF-01        | Permite al usuario cambiar la información de una tarea ya creada o eliminarla.                                                                |
-| `/habitos/nuevo`      | Nuevo hábito propio | `/inicio`               | RF-02        | Crea un hábito propio, sin plantilla, con nombre, frecuencia, meta y horario. Los errores de validación del backend se muestran bajo cada campo. |
-| `/habitos/:id`        | Detalle del hábito  | `/inicio`               | RF-02, RF-03 | Muestra la racha actual, el historial de cumplimientos (con fecha y hora) y el acceso a editar el hábito.                                     |
-| `/habitos/:id/editar` | Editar hábito       | `/habitos/:id`          | RF-02        | Página que permite al usuario editar los datos del hábito y eliminarlo.                                                                       |
-| `/recordatorios`      | Recordatorios       | `/perfil`               | RF-05        | Lista los recordatorios agrupados por hábito y permite crearlos (uno o varios días de la semana y una hora), activarlos o desactivarlos y eliminarlos. Usa `/api/recordatorios`. |
-| `/configuraciones`    | Configuraciones     | `/perfil`               |              | Muestra la sesión actual (cuenta, rol y vencimiento del token) y permite cerrar sesión con confirmación. Disponible también para el administrador. |
+**Rutas protegidas del administrador:**
 
-Si no hay sesión, todas redirigen a `/login`.
+| Ruta                         | Vista                 | RF    | Descripción                                                                                                    |
+| ---------------------------- | --------------------- | ----- | -------------------------------------------------------------------------------------------------------------- |
+| `/admin/plantillas`          | Gestión de plantillas | RF-07 | Lista de plantillas con su uso. Crear y editar se hacen en un modal; desactivar o eliminar pide confirmación. |
+| `/admin/categorias-metricas` | Categorías y métricas | RF-08 | CRUD de categorías (en modal) y métricas agregadas y anónimas del uso de la app.                               |
 
-**Rutas Protegidas del Administrador:**
-
-| Ruta                           | Vista                 | RF    | Descripción                                                                                                                             |
-| ------------------------------ | --------------------- | ----- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `/admin/plantillas`            | Gestión de Plantillas | RF-07 | Página en la cual el administrador podrá decidir si crear, editar o desactivar una plantilla (no se pueden desactivar si están en uso). |
-| `/admin/plantillas/nueva`      | Nueva plantilla       | RF-07 | Página en la cual el Administrador creará una nueva plantilla.                                                                          |
-| `/admin/plantillas/:id/editar` | Editar plantilla      | RF-07 | Página en la cual el Administrador podrá editar una plantilla por su ID.                                                                |
-| `/admin/categorias-metricas`   | Categorías y métricas | RF-08 | Permite gestionar categorías y consultar métricas agregadas y anonimizadas del uso de la app                                            |
-
-Todas las rutas de administrador requieren sesión activa y rol de administrador. Sin sesión → `/login`. Usuario normal → `/acceso-denegado`.
+Sin sesión → `/login`. Usuario normal → `/acceso-denegado`.
 
 **Rutas especiales:**
 
-| Ruta | Vista                                                                                 | Redirección                                                                     | Descripción                                                                 |
-| ---- | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `/`  | Ninguna (solo redirige a inicio o login o admin/plantillas dependiendo de la persona) | Sin sesión → `/login`; usuario → `/inicio`; administrador → `/admin/plantillas` | Ruta raíz de la aplicación.                                                 |
-| `*`  | Página no encontrada (404)                                                            | Ninguna                                                                         | Se muestra cuando la URL no existe y ofrece un botón para volver al inicio. |
+| Ruta | Vista                      | Redirección                                                                     | Descripción                                                                                                            |
+| ---- | -------------------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `/`  | Ninguna                    | Sin sesión → `/login`; usuario → `/inicio`; administrador → `/admin/plantillas` | Ruta raíz: solo redirige.                                                                                              |
+| `*`  | Página no encontrada (404) | Ninguna                                                                         | Cualquier otra URL. El botón vuelve a la pantalla del rol (`/inicio` o `/admin/plantillas`), o a `/login` sin sesión. |
 
 ### 2. Relaciones jerárquicas entre vistas
-
-La aplicación se organiza mediante una estructura jerárquica en la cual solo se puede acceder a ciertas páginas si la persona que ingresa es un Usuario registrado o un Administrador.
 
 ```text
 Aplicación
 │
 ├── Rutas públicas
 │   ├── / (redirige según sesión y rol)
-│   ├── /login 
-│   ├── /registro 
-│   ├── /acceso-denegado 
-│   └── * (Página no encontrada)
+│   ├── /login
+│   ├── /registro
+│   ├── /acceso-denegado
+│   └── * (página no encontrada)
 │
 └── Rutas protegidas
     │
-    ├── Usuario
-    │   ├── /inicio 
-    │   │   └── /habitos/:id 
-    │   │       └── /habitos/:id/editar 
-    │   ├── /tareas 
-    │   │   ├── /tareas/nueva 
-    │   │   └── /tareas/:id/editar 
-    │   ├── /catalogo 
-    │   │   └── /habitos/nuevo 
-    │   ├── /progreso 
-    │   └── /perfil 
-    │       ├── /recordatorios 
-    │       └── /configuraciones 
+    ├── Usuario (IonTabs: barra inferior en móvil)
+    │   ├── /inicio
+    │   │   └── /habitos/nuevo
+    │   ├── /tareas
+    │   ├── /catalogo
+    │   ├── /progreso
+    │   └── /perfil                  (también administrador)
+    │       └── /configuraciones     (también administrador)
+    │           └── /recordatorios
     │
     └── Administrador
-        ├── /admin/plantillas 
-        │   ├── /admin/plantillas/nueva 
-        │   └── /admin/plantillas/:id/editar
-        └── /admin/categorias-metricas 
+        ├── /admin/plantillas
+        └── /admin/categorias-metricas
 ```
 
-*Nota: `/habitos/nuevo` aparece bajo `/catalogo`, pero también se puede acceder desde `/inicio`.*
+`/recordatorios` también está en el menú lateral del usuario.
+
+### 3. Navegación en web y en móvil
+
+- **Web (desde 768 px):** cada pantalla tiene el menú lateral fijo a la izquierda, con las opciones del rol y "Cerrar sesión". Las pantallas secundarias muestran un botón "Volver" sobre el título.
+- **Móvil (menos de 768 px):** el usuario tiene una barra inferior (`IonTabs`) con Inicio, Tareas, Catálogo, Progreso y Perfil. La barra superior tiene el botón del menú, que da acceso al resto de las opciones. En las pantallas secundarias, la barra superior muestra además una flecha para volver: a la pantalla anterior o, si se abrió la URL directamente, a su pantalla padre. El administrador no tiene barra inferior y navega con el menú.
 
 ## Diferenciación de acceso según roles
 
@@ -234,7 +224,7 @@ La aplicación controla el acceso a diferentes funcionalidades dependiendo del r
 |   Registrar cumplimiento de un hábito y ver su racha   | RF-03 |    ✓    |       -       |
 | Consultar porcentaje de cumplimiento semanal y mensual | RF-04 |    ✓    |       -       |
 |                Configurar recordatorios                | RF-05 |    ✓    |       -       |
-|            Editar perfil y configuraciones             |   -   |    ✓    |       -       |
+|  Ver su perfil y la configuración de la sesión         |   -   |    ✓    |       ✓       |
 |                     Cerrar sesión                      |   -   |    ✓    |       ✓       |
 |    Crear, editar y desactivar plantillas de hábitos    | RF-07 |    -    |       ✓       |
 |                  Gestionar categorías                  | RF-08 |    -    |       ✓       |
@@ -247,7 +237,7 @@ Podrá:
 - Registrar el cumplimiento de sus hábitos y consultar su racha.
 - Consultar su porcentaje de cumplimiento semanal y mensual.
 - Configurar recordatorios.
-- Editar su perfil y configuraciones.
+- Ver su perfil y la configuración de su sesión.
 
 El usuario no podrá acceder a las rutas de administración ni a la información de otros usuarios.
 ### Acceso del Administrador 
@@ -261,33 +251,31 @@ Podrá:
  
 ### Control de acceso a rutas
  
- La diferenciación por roles se aplica tanto en la interfaz como en las rutas de la aplicación. El menú muestra solo las opciones correspondientes al rol, y las rutas protegidas verifican la sesión y el rol antes de mostrarse: sin sesión se redirige a `/login`, y un usuario que intenta entrar a una ruta de administrador se redirige a `/acceso-denegado`. Además, el servidor valida el rol en cada solicitud y responde 403 ante un acceso no autorizado (RF-08).
+ La diferenciación por roles se aplica tanto en la interfaz como en las rutas de la aplicación. El menú muestra solo las opciones correspondientes al rol, y las rutas protegidas verifican la sesión y el rol antes de mostrarse: sin sesión se redirige a `/login`, un usuario que intenta entrar a una ruta de administrador se redirige a `/acceso-denegado` y un administrador que abre una ruta de usuario vuelve a `/admin/plantillas`. Además, el servidor valida el rol en cada solicitud y responde 403 ante un acceso no autorizado (RF-08).
  
- Por ejemplo:
+ Rutas de `AppRoutes.tsx` según quién puede abrirlas:
 ```text
 # Públicas
+/
 /login
 /registro
 /acceso-denegado
+*
 
-# Usuario 
+# Usuario
 /inicio
 /tareas
-/tareas/nueva
-/tareas/:id/editar
 /catalogo
-/habitos/nuevo
-/habitos/:id
-/habitos/:id/editar
 /progreso
-/perfil
+/habitos/nuevo
 /recordatorios
+
+# Usuario y administrador
+/perfil
 /configuraciones
 
 # Administrador
 /admin/plantillas
-/admin/plantillas/nueva
-/admin/plantillas/:id/editar
 /admin/categorias-metricas
 ```
 
@@ -340,7 +328,7 @@ Mis tareas (/tareas)
       ↓
 Seleccionar "Nueva tarea"
       ↓
-Nueva tarea (/tareas/nueva)
+Modal "Nueva tarea" (en /tareas)
       ↓
 Ingresar título, descripción, fecha límite y prioridad
       ↓
@@ -425,7 +413,7 @@ La navegación es simple y predecible: las cinco secciones principales (Inicio, 
 Las acciones frecuentes requieren pocos pasos. Registrar el cumplimiento de un hábito se hace con un toque desde Inicio (RNF-03), y adoptar un hábito del catálogo abre el formulario con los datos precargados, de modo que el usuario solo los ajusta.
 
 #### Claridad estructural
-Las rutas se dividen en públicas y protegidas, y las de administrador cuelgan del prefijo `/admin`. Así se aplica un criterio de acceso por grupo y cada vista tiene una única responsabilidad: Inicio registra el cumplimiento, y el Detalle del hábito muestra su racha e historial.
+Las rutas se dividen en públicas y protegidas, y las de administrador cuelgan del prefijo `/admin`. Así se aplica un criterio de acceso por grupo y cada vista tiene una única responsabilidad: Inicio registra el cumplimiento y muestra la racha, y Progreso muestra los porcentajes de cumplimiento.
 
 #### Escalabilidad
 Un nuevo rol se incorpora como un grupo de rutas con su propio criterio de acceso, sin modificar las existentes, y las nuevas secciones se agregan como rutas hijas de una vista actual. Además, el servidor valida el rol en cada solicitud (RF-08), por lo que la estructura puede crecer sin comprometer la seguridad.
