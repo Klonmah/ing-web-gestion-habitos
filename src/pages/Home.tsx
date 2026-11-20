@@ -6,7 +6,7 @@ import {
 } from '@ionic/react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import LeftSideMenu from '../components/LeftSideMenu';
-import { obtenerUsuario } from '../services/api';
+import { obtenerUsuario } from '../services/auth';
 import {
   listarHabitosDeHoy, marcarCumplidoHoy, desmarcarCumplidoHoy
 } from '../services/habitosService';

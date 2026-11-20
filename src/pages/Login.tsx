@@ -2,8 +2,9 @@ import { IonPage, IonContent, IonButton, IonHeader, IonInput, IonText, IonIcon }
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useState } from 'react';
 import { logInOutline } from 'ionicons/icons';
-import { api, guardarSesion } from '../services/api';
-import type { UsuarioSesion } from '../services/api';
+import { api } from '../services/api';
+import { guardarSesion, RUTA_INICIO } from '../services/auth';
+import type { UsuarioSesion } from '../services/auth';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ const Login: React.FC = () => {
 
     setCargando(true);
     try {
-      const { usuario, token } = await api<{ usuario: Omit<UsuarioSesion, 'email'>; token: string }>(
+      const { usuario, token } = await api<{ usuario: UsuarioSesion; token: string }>(
         '/auth/login',
         { metodo: 'POST', cuerpo: { correo: email.trim(), contrasena: password }, publica: true }
       );
@@ -40,7 +41,7 @@ const Login: React.FC = () => {
       // el formulario volvia a mostrar el correo y la contrasena.
       setEmail('');
       setPassword('');
-      navigate(sesion.rol === 'admin' ? '/admin/plantillas' : '/inicio');
+      navigate(RUTA_INICIO[sesion.rol]);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo iniciar sesión.');
     } finally {

@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
-import { obtenerToken, obtenerUsuario } from '../services/api';
+import { obtenerToken, obtenerUsuario } from '../services/auth';
 
 interface ProtectedRouteProps {
   children: ReactNode;

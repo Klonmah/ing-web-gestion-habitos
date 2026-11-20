@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { IonPage, IonContent, IonButton, IonInput, IonText, IonIcon } from '@ionic/react';
 import { Link, useNavigate } from 'react-router-dom';
 import { personAddOutline } from 'ionicons/icons';
-import { api, ApiError, guardarSesion } from '../services/api';
-import type { UsuarioSesion } from '../services/api';
+import { api, ApiError } from '../services/api';
+import { guardarSesion, RUTA_INICIO } from '../services/auth';
+import type { UsuarioSesion } from '../services/auth';
 
 // Campos del formulario. "confirmar" solo existe en el front.
 type Campo = 'nombre' | 'correo' | 'contrasena' | 'confirmar';
@@ -57,7 +58,7 @@ const Registro: React.FC = () => {
 
     setCargando(true);
     try {
-      const { usuario, token } = await api<{ usuario: Omit<UsuarioSesion, 'email'>; token: string }>(
+      const { usuario, token } = await api<{ usuario: UsuarioSesion; token: string }>(
         '/auth/registro',
         {
           metodo: 'POST',
@@ -66,8 +67,8 @@ const Registro: React.FC = () => {
         }
       );
       // El backend devuelve el token al registrarse: se entra directo.
-      guardarSesion(token, usuario);
-      navigate('/inicio', { replace: true });
+      const sesion = guardarSesion(token, usuario);
+      navigate(RUTA_INICIO[sesion.rol], { replace: true });
     } catch (err) {
       if (err instanceof ApiError && err.detalles.length > 0) {
         // 400 de validacion: un mensaje por campo (el primero de cada uno).

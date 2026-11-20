@@ -5,7 +5,7 @@ import {
 import { logOutOutline, alarmOutline, personOutline } from 'ionicons/icons';
 import { useNavigate } from 'react-router-dom';
 import PaginaConMenu from '../components/PaginaConMenu';
-import { cerrarSesion, obtenerToken } from '../services/api';
+import { cerrarSesion, obtenerToken } from '../services/auth';
 import { obtenerCuenta, vencimientoDelToken } from '../services/perfilService';
 import type { DatosCuenta } from '../services/perfilService';
 

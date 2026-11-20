@@ -3,7 +3,7 @@ import {
     IonMenu, IonContent, IonList, IonItem, IonLabel, IonMenuToggle
 } from '@ionic/react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { cerrarSesion } from '../services/api';
+import { cerrarSesion } from '../services/auth';
 
 interface LeftSideMenuProps {
     // Qué opciones mostrar. El administrador no accede a las secciones del

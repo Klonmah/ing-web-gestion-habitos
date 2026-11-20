@@ -9,21 +9,12 @@
 //   3. Convierte los errores del backend en un Error con mensaje
 //      legible, para que las paginas lo muestren con err.message.
 
+// La sesion (token y usuario) se lee y se borra con las funciones de auth.ts.
+import { cerrarSesion, obtenerToken } from './auth';
+
 // URL base de la API. En desarrollo apunta al backend local; se puede
 // cambiar con la variable VITE_API_URL en un archivo .env del front.
 const API_URL: string = import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api';
-
-export const TOKEN_KEY = 'token';
-export const USUARIO_KEY = 'usuario';
-
-/** Usuario tal como lo guarda el front tras el login. */
-export interface UsuarioSesion {
-  id_usuario: number;
-  nombre: string;
-  correo: string;
-  email: string; // copia de "correo": Home.tsx y otras paginas leen "email"
-  rol: 'usuario' | 'admin';
-}
 
 /** Error de un campo, tal como lo arma el middleware validar del backend. */
 export interface DetalleError {
@@ -47,36 +38,6 @@ export class ApiError extends Error {
     this.detalles = detalles;
   }
 }
-
-
-// Sesion (localStorage)
-
-
-export const obtenerToken = (): string | null => localStorage.getItem(TOKEN_KEY);
-
-export const obtenerUsuario = (): UsuarioSesion | null => {
-  try {
-    const crudo = localStorage.getItem(USUARIO_KEY);
-    return crudo ? (JSON.parse(crudo) as UsuarioSesion) : null;
-  } catch {
-    return null;
-  }
-};
-
-export const guardarSesion = (
-  token: string,
-  usuario: Omit<UsuarioSesion, 'email'>
-): UsuarioSesion => {
-  const sesion: UsuarioSesion = { ...usuario, email: usuario.correo };
-  localStorage.setItem(TOKEN_KEY, token);
-  localStorage.setItem(USUARIO_KEY, JSON.stringify(sesion));
-  return sesion;
-};
-
-export const cerrarSesion = (): void => {
-  localStorage.removeItem(TOKEN_KEY);
-  localStorage.removeItem(USUARIO_KEY);
-};
 
 
 // Peticiones

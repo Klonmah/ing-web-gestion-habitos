@@ -3,7 +3,7 @@ import {
   IonPage, IonSplitPane, IonHeader, IonToolbar, IonButtons, IonMenuButton, IonTitle, IonContent
 } from '@ionic/react';
 import LeftSideMenu from './LeftSideMenu';
-import { obtenerUsuario } from '../services/api';
+import { obtenerUsuario } from '../services/auth';
 
 interface PaginaConMenuProps {
   // Titulo de la barra superior (solo se ve en movil).
