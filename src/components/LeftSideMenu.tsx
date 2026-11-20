@@ -19,12 +19,15 @@ const paginasUsuario = [
     { title: 'Catálogo', url: '/catalogo' },
     { title: 'Progreso', url: '/progreso' },
     { title: 'Recordatorios', url: '/recordatorios' },
-    { title: 'Perfil', url: '/perfil' }
+    { title: 'Perfil', url: '/perfil' },
+    { title: 'Configuración', url: '/configuraciones' }
 ];
 
 const paginasAdmin = [
     { title: 'Plantillas', url: '/admin/plantillas' },
-    { title: 'Categorías y métricas', url: '/admin/categorias-metricas' }
+    { title: 'Categorías y métricas', url: '/admin/categorias-metricas' },
+    { title: 'Perfil', url: '/perfil' },
+    { title: 'Configuración', url: '/configuraciones' }
 ];
 
 const LeftSideMenu: React.FC<LeftSideMenuProps> = ({ rol = 'usuario', contentId = 'main-content' }) => {

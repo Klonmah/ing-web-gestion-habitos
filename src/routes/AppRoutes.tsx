@@ -10,6 +10,8 @@ import Progreso from '../pages/Progreso';
 import CategoriasMetricas from '../pages/CategoriasMetricas';
 import NuevoHabito from '../pages/NuevoHabito';
 import Recordatorios from '../pages/Recordatorios';
+import Perfil from '../pages/Perfil';
+import Configuracion from '../pages/Configuracion';
 import PaginaPlaceholder from '../pages/PaginaPlaceholder';
 import { IonRouterOutlet } from '@ionic/react';
 import ProtectedRoute from './ProtectedRoute';
@@ -33,9 +35,9 @@ function AppRoutes() {
             <Route path="/habitos/nuevo" element={<ProtectedRoute><NuevoHabito /></ProtectedRoute>} />
 
             <Route path="/progreso" element={<ProtectedRoute><Progreso /></ProtectedRoute>} />
-            <Route path="/perfil" element={<ProtectedRoute><PaginaPlaceholder /></ProtectedRoute>} />
+            <Route path="/perfil" element={<ProtectedRoute><Perfil /></ProtectedRoute>} />
             <Route path="/recordatorios" element={<ProtectedRoute><Recordatorios /></ProtectedRoute>} />
-            <Route path="/configuraciones" element={<ProtectedRoute><PaginaPlaceholder /></ProtectedRoute>} />
+            <Route path="/configuraciones" element={<ProtectedRoute><Configuracion /></ProtectedRoute>} />
 
 
             {/* Rutas de admin */}
